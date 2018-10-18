@@ -60,37 +60,41 @@ namespace PoweredSoft.DynamicQuery
         {
             CurrentQueryable = CurrentQueryable.Query(whereBuilder =>
             {
-                Criteria.Filters.ForEach(filter => ApplyFilter(whereBuilder, filter));
+                Criteria.Filters.ForEach(filter => ApplyFilter<T>(whereBuilder, filter));
             });
         }
 
-        protected virtual void ApplyFilter(WhereBuilder whereBuilder, IFilter filter)
+        protected virtual void ApplyFilter<T>(WhereBuilder whereBuilder, IFilter filter)
         {
-            var transformedFilter = InterceptFilter(filter);
+            var transformedFilter = InterceptFilter<T>(filter);
             if (transformedFilter is ISimpleFilter)
-                ApplySimpleFilter(whereBuilder, transformedFilter as ISimpleFilter);
+                ApplySimpleFilter<T>(whereBuilder, transformedFilter as ISimpleFilter);
             else if (transformedFilter is ICompositeFilter)
-                AppleCompositeFilter(whereBuilder, transformedFilter as ICompositeFilter);
+                AppleCompositeFilter<T>(whereBuilder, transformedFilter as ICompositeFilter);
             else
                 throw new NotSupportedException();
         }
 
-        protected virtual void AppleCompositeFilter(WhereBuilder whereBuilder, ICompositeFilter filter)
+        protected virtual void AppleCompositeFilter<T>(WhereBuilder whereBuilder, ICompositeFilter filter)
         {
-            whereBuilder.SubQuery(subWhereBuilder => filter.Filters.ForEach(subFilter => ApplyFilter(subWhereBuilder, subFilter)), filter.And == true);
+            whereBuilder.SubQuery(subWhereBuilder => filter.Filters.ForEach(subFilter => ApplyFilter<T>(subWhereBuilder, subFilter)), filter.And == true);
         }
 
-        protected virtual void ApplySimpleFilter(WhereBuilder whereBuilder, ISimpleFilter filter)
+        protected virtual void ApplySimpleFilter<T>(WhereBuilder whereBuilder, ISimpleFilter filter)
         {
             var resolvedConditionOperator = ResolveFrom(filter.Type);
             whereBuilder.Compare(filter.Path, resolvedConditionOperator, filter.Value, and: filter.And == true);
         }
 
-        private IFilter InterceptFilter(IFilter filter)
+        private IFilter InterceptFilter<T>(IFilter filter)
         {
             var ret = Interceptors.Where(t => t is IFilterInterceptor)
                 .Cast<IFilterInterceptor>()
                 .Aggregate(filter, (previousFilter, interceptor) => interceptor.InterceptFilter(previousFilter));
+
+            ret = Interceptors.Where(t => t is IFilterInterceptor<T>)
+                .Cast<IFilterInterceptor<T>>()
+                .Aggregate(filter, (previousFilter, interceptor) => interceptor.InterceptFilter<T>(previousFilter));
 
             return ret;
         }
