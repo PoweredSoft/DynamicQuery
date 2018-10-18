@@ -8,7 +8,6 @@ namespace PoweredSoft.DynamicQuery.Cli
     public class PersonQueryInterceptor : IQueryInterceptor
         //, IBeforeQueryAlteredInterceptor<Person>
         //, IFilterInterceptor
-        , IFilterInterceptor<Person>
     {
         public IQueryable<Person> InterceptQueryBeforeAltered(IQueryCriteria criteria, IQueryable<Person> queryable) 
             => queryable.Where(t => t.FirstName.StartsWith("Da"));
@@ -39,11 +38,6 @@ namespace PoweredSoft.DynamicQuery.Cli
 
             return filter;
         }
-
-        public IFilter InterceptFilter<T>(IFilter filter)
-        {
-            return InterceptFilter(filter);
-        }
     }
 
     public class Person
@@ -51,6 +45,11 @@ namespace PoweredSoft.DynamicQuery.Cli
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+    }
+
+    public class OtherClass
+    {
+        
     }
 
     class Program

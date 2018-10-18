@@ -92,10 +92,6 @@ namespace PoweredSoft.DynamicQuery
                 .Cast<IFilterInterceptor>()
                 .Aggregate(filter, (previousFilter, interceptor) => interceptor.InterceptFilter(previousFilter));
 
-            ret = Interceptors.Where(t => t is IFilterInterceptor<T>)
-                .Cast<IFilterInterceptor<T>>()
-                .Aggregate(filter, (previousFilter, interceptor) => interceptor.InterceptFilter<T>(previousFilter));
-
             return ret;
         }
 

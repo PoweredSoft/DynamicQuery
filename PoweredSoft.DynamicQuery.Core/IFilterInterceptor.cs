@@ -6,9 +6,4 @@ namespace PoweredSoft.DynamicQuery.Core
     {
         IFilter InterceptFilter(IFilter filter);
     }
-
-    public interface IFilterInterceptor<T> : IQueryInterceptor
-    {
-        IFilter InterceptFilter<T>(IFilter filter);
-    }
 }
