@@ -42,6 +42,14 @@ namespace PoweredSoft.DynamicQuery
             ApplySimpleBeforeAlterInterceptors();
             ApplyGenericBeforeAlterInterceptors<T>();
             ApplyFilters<T>();
+
+            // create group levels.
+            if (Criteria.Groups.Count != 0)
+            {
+
+            }
+
+            // TODO.
         }
 
         protected virtual ConditionOperators? ResolveFromOrDefault(FilterType filterType) =>
