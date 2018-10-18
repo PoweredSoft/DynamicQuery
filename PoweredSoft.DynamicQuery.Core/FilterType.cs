@@ -2,10 +2,17 @@
 {
     public enum FilterType
     {
-        Equals,
+        Equal,
         Contains,
         StartsWith,
         EndsWith,
-        Composite
+        Composite,
+        NotEqual,
+        GreaterThan,
+        LessThanOrEqual,
+        GreaterThanOrEqual,
+        LessThan,
+        In,
+        NotIn
     }
 }
