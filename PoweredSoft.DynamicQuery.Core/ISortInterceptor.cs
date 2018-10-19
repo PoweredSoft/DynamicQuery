@@ -2,7 +2,7 @@
 
 namespace PoweredSoft.DynamicQuery.Core
 {
-    public interface ISortInteceptor : IQueryInterceptor
+    public interface ISortInterceptor : IQueryInterceptor
     {
         IEnumerable<ISort> InterceptSort(ISort sort);
     }

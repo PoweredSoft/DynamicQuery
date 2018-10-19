@@ -1,7 +1,11 @@
-﻿namespace PoweredSoft.DynamicQuery.Core
+﻿using System.Linq;
+
+namespace PoweredSoft.DynamicQuery.Core
 {
     public interface IQueryInterceptor
     {
 
     }
+
+   
 }

@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace PoweredSoft.DynamicQuery.Cli
 {
@@ -73,26 +75,42 @@ namespace PoweredSoft.DynamicQuery.Cli
             };
 
             var queryable = list.AsQueryable();
-
             var criteria = new QueryCriteria();
+            criteria.Page = 1;
+            criteria.PageSize = 10;
 
-            criteria.Filters.Add(new SimpleFilter
+            criteria.Filters = new List<IFilter>
             {
-                Path = "LastName",
-                Value = "Lebee",
-                Type = FilterType.Equal,
-            });
-
-            criteria.Filters.Add(new SimpleFilter
-            {
-                Path = "FirstName",
-                Value = "David,Michaela",
-                Type = FilterType.Equal,
-            });
+                new SimpleFilter() {Path = nameof(Person.LastName), Value = "Lebee", Type = FilterType.Equal},
+                new CompositeFilter()
+                {
+                    Type = FilterType.Composite,
+                    And = true,
+                    Filters = new List<IFilter>
+                    {
+                        new SimpleFilter() {Path = nameof(Person.FirstName), Value = "David", Type = FilterType.Equal},
+                        new SimpleFilter() {Path = nameof(Person.FirstName), Value = "Zohra", Type = FilterType.Equal},
+                    }
+                }
+            };
 
             var handler = new QueryHandler();
             handler.AddInterceptor(new PersonQueryInterceptor());
-            handler.Execute(queryable, criteria);
+            var result = handler.Execute(queryable, criteria);
+
+            var jsonSettings = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            
+            jsonSettings.Converters.Add(new StringEnumConverter { AllowIntegerValues = false });
+
+            Console.WriteLine("Request:\n");
+            Console.WriteLine(JsonConvert.SerializeObject(criteria, Formatting.Indented, jsonSettings));
+            Console.WriteLine("");
+            Console.WriteLine("Response:\n");
+            Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented, jsonSettings));
+            Console.ReadKey();
         }
     }
 }

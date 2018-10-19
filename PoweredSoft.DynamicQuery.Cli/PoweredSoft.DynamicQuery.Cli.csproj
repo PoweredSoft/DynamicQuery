@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj" />
     <ProjectReference Include="..\PoweredSoft.DynamicQuery\PoweredSoft.DynamicQuery.csproj" />
   </ItemGroup>

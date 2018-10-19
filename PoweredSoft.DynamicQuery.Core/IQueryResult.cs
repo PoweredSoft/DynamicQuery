@@ -13,17 +13,21 @@ namespace PoweredSoft.DynamicQuery.Core
 
     public interface IQueryResult
     {
-        long Count { get; }
         List<IAggregateResult> Aggregates { get; }
-    }
-
-    public interface IQueryResultSimple : IQueryResult
-    {
         List<object> Data { get; }
     }
 
-    public interface IQueryResultGrouped : IQueryResult
+    public interface IGroupQueryResult : IQueryResult
     {
-        List<IQueryResult> Data { get;  }
+        string GroupPath { get; set; }
+        object GroupValue { get; set; }
     }
+
+    public interface IQueryExecutionResult : IQueryResult
+    {
+        long TotalRecords { get; set; }
+        long? NumberOfPages { get; set; }
+    }
+
+   
 }

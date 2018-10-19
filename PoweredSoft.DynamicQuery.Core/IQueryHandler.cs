@@ -5,10 +5,18 @@ using System.Threading.Tasks;
 
 namespace PoweredSoft.DynamicQuery.Core
 {
-    public interface IQueryHandler
+    public interface IInterceptableQueryHandler
     {
-        IQueryResult Execute(IQueryable queryable, IQueryCriteria criteria);
-        Task<IQueryResult> ExecuteAsync(IQueryable queryable, IQueryCriteria criteria);
         void AddInterceptor(IQueryInterceptor interceptor);
+    }
+
+    public interface IQueryHandler : IInterceptableQueryHandler
+    {
+        IQueryExecutionResult Execute(IQueryable queryable, IQueryCriteria criteria);
+    }
+
+    public interface IAsyncQueryHandler : IInterceptableQueryHandler
+    {
+        Task<IQueryExecutionResult> ExecuteAsync(IQueryable queryable, IQueryCriteria criteria);
     }
 }
