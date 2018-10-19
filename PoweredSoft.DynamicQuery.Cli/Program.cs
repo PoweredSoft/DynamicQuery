@@ -47,6 +47,7 @@ namespace PoweredSoft.DynamicQuery.Cli
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public int Age { get; set; }
     }
 
     public class OtherClass
@@ -67,11 +68,11 @@ namespace PoweredSoft.DynamicQuery.Cli
         {
             var list = new List<Person>()
             {
-                new Person{ Id = 1, FirstName = "David", LastName = "Lebee"},
-                new Person{ Id = 2, FirstName = "Michaela", LastName = "Lebee"},
-                new Person{ Id = 3, FirstName = "Zohra", LastName = "Lebee"},
-                new Person{ Id = 4, FirstName = "Eric", LastName = "Vickar"},
-                new Person{ Id = 5, FirstName = "Susan", LastName = "Vickar"},
+                new Person{ Id = 1, FirstName = "David", LastName = "Lebee", Age = 29},
+                new Person{ Id = 2, FirstName = "Michaela", LastName = "Lebee", Age = 29},
+                new Person{ Id = 3, FirstName = "Zohra", LastName = "Lebee", Age = 20},
+                new Person{ Id = 4, FirstName = "Eric", LastName = "Vickar", Age = 30},
+                new Person{ Id = 5, FirstName = "Susan", LastName = "Vickar", Age = 30},
             };
 
             var queryable = list.AsQueryable();
@@ -79,6 +80,7 @@ namespace PoweredSoft.DynamicQuery.Cli
             criteria.Page = 1;
             criteria.PageSize = 10;
 
+            /*
             criteria.Filters = new List<IFilter>
             {
                 new SimpleFilter() {Path = nameof(Person.LastName), Value = "Lebee", Type = FilterType.Equal},
@@ -92,7 +94,18 @@ namespace PoweredSoft.DynamicQuery.Cli
                         new SimpleFilter() {Path = nameof(Person.FirstName), Value = "Zohra", Type = FilterType.Equal},
                     }
                 }
+            };*/
+
+            criteria.Groups = new List<IGroup>()
+            {
+                new Group { Path = "LastName" }
             };
+
+            criteria.Aggregates = new List<IAggregate>()
+            {
+                new Aggregate { Path = "Age", Type = AggregateType.Count },
+                new Aggregate { Path = "Age", Type = AggregateType.Avg }
+            };;
 
             var handler = new QueryHandler();
             handler.AddInterceptor(new PersonQueryInterceptor());

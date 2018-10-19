@@ -23,8 +23,34 @@ namespace PoweredSoft.DynamicQuery
 
         protected virtual IQueryExecutionResult ExecuteGrouping<T>()
         {
-            throw new NotImplementedException();
+            var result = new GroupedQueryExecutionResult();
+            result.TotalRecords = CurrentQueryable.LongCount();
+
+            Criteria.Groups.ForEach(group =>
+            {
+                var finalGroup = InterceptGroup<T>(group);
+                var groupCleanedPath = group.Path.Replace(".", "");
+                CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
+                {
+                    gb.Path(finalGroup.Path);
+                });
+
+                CurrentQueryable = CurrentQueryable.Select(sb =>
+                {
+                    sb.ToList("Data");
+                    sb.Key($"Group_{groupCleanedPath}", group.Path);
+                    Criteria.Aggregates.ForEach(a =>
+                    {
+                        var selectType = ResolveSelectFrom(a.Type);
+                        var pathCleaned = a.Path.Replace(".", "");
+                        sb.Aggregate(a.Path, selectType, $"Agg_{a.Type}_{pathCleaned}");
+                    });
+                });
+            });
+
+            return result;
         }
+
 
         protected virtual IQueryExecutionResult ExecuteNoGrouping<T>()
         {

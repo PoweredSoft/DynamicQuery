@@ -35,5 +35,19 @@ namespace PoweredSoft.DynamicQuery.Extensions
 
             return null;
         }
+
+        public static SelectTypes? SelectType(this AggregateType aggregateType)
+        {
+            if (aggregateType == AggregateType.Avg)
+                return SelectTypes.Average;
+            if (aggregateType == AggregateType.Count)
+                return SelectTypes.Count;
+            if (aggregateType == AggregateType.LongCount)
+                return SelectTypes.LongCount;
+            if (aggregateType == AggregateType.Sum)
+                return SelectTypes.Sum;
+
+            return null;
+        }
     }
 }

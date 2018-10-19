@@ -38,6 +38,17 @@ namespace PoweredSoft.DynamicQuery
                 Interceptors.Add(interceptor);
         }
 
+        protected virtual IGroup InterceptGroup<T>(IGroup group)
+        {
+            var ret = Interceptors
+                .Where(t => t is IGroupingInterceptor)
+                .Cast<IGroupingInterceptor>()
+                .Aggregate(group, (prev, inter) => inter.InterceptGroup(prev));
+
+            return ret;
+        }
+
+
         protected virtual void ApplyNoGroupingPaging<T>()
         {
             if (!HasPaging)
@@ -66,12 +77,18 @@ namespace PoweredSoft.DynamicQuery
 
         protected virtual List<ISort> InterceptSort<T>(ISort sort)
         {
+            var original = new List<ISort>()
+            {
+                sort
+            };
+
             var ret = Interceptors
                 .Where(t => t is ISortInterceptor)
                 .Cast<ISortInterceptor>()
-                .SelectMany(interceptor => interceptor.InterceptSort(sort));
+                .Aggregate(original as IEnumerable<ISort>, (prev, inter) => inter.InterceptSort(prev))
+                .Distinct();
 
-            return ret.Distinct().ToList();
+            return ret.ToList();
         }
 
         protected virtual void ApplyNoSortInterceptor<T>()
@@ -85,13 +102,24 @@ namespace PoweredSoft.DynamicQuery
                 .Aggregate((IQueryable<T>)CurrentQueryable, (prev, interceptor) => interceptor.InterceptNoSort(prev));
         }
 
-        protected virtual ConditionOperators? ResolveFromOrDefault(FilterType filterType) => filterType.ConditionOperator();
 
-        protected virtual ConditionOperators ResolveFrom(FilterType filterType)
+        protected virtual SelectTypes? ResolveSelectFromOrDefault(AggregateType aggregateType) => aggregateType.SelectType();
+        protected virtual ConditionOperators? ResolveConditionOperatorFromOrDefault(FilterType filterType) => filterType.ConditionOperator();
+
+        protected virtual ConditionOperators ResolveConditionOperatorFrom(FilterType filterType)
         {
-            var ret = ResolveFromOrDefault(filterType);
+            var ret = ResolveConditionOperatorFromOrDefault(filterType);
             if (ret == null)
                 throw new NotSupportedException($"{filterType} is not supported");
+
+            return ret.Value;
+        }
+
+        protected virtual SelectTypes ResolveSelectFrom(AggregateType aggregateType)
+        {
+            var ret = ResolveSelectFromOrDefault(aggregateType);
+            if (ret == null)
+                throw new NotSupportedException($"{aggregateType} is not supported");
 
             return ret.Value;
         }
@@ -125,7 +153,7 @@ namespace PoweredSoft.DynamicQuery
 
         protected virtual void ApplySimpleFilter<T>(WhereBuilder whereBuilder, ISimpleFilter filter)
         {
-            var resolvedConditionOperator = ResolveFrom(filter.Type);
+            var resolvedConditionOperator = ResolveConditionOperatorFrom(filter.Type);
             whereBuilder.Compare(filter.Path, resolvedConditionOperator, filter.Value, and: filter.And == true);
         }
 

@@ -5,7 +5,6 @@
         Count,
         Sum,
         Avg,
-        Max,
-        Min
+        LongCount
     }
 }
