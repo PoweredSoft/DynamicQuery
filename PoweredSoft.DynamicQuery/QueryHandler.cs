@@ -32,52 +32,16 @@ namespace PoweredSoft.DynamicQuery
             var finalGroups = Criteria.Groups.Select(g => InterceptGroup<T>(g)).ToList();
 
             // get the aggregates.
-            List<List<DynamicClass>> aggregateResults = null;
-            if (Criteria.Aggregates.Any())
-            {
-                var previousGroups = new List<IGroup>();
-                aggregateResults = finalGroups.Select(fg =>
-                {
-                    var groupExpression = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
-                    {
-                        var groupKeyIndex = -1;
-                        previousGroups.ForEach(pg =>gb.Path(pg.Path, $"Key_{++groupKeyIndex}"));
-                        gb.Path(fg.Path, $"Key_{++groupKeyIndex}");
-                    });
-
-                    var selectExpression = groupExpression.Select(sb =>
-                    {
-                        var groupKeyIndex = -1;
-                        previousGroups.ForEach(pg => sb.Key($"Key_{++groupKeyIndex}"));
-                        sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}");
-                        Criteria.Aggregates.ForEach(a =>
-                        {
-                            var selectType = ResolveSelectFrom(a.Type);
-                            var pathCleaned = a.Path?.Replace(".", "");
-                            sb.Aggregate(a.Path, selectType, $"Agg_{a.Type}_{pathCleaned}");
-                        });
-                    });
-
-                    var aggregateResult = selectExpression.ToDynamicClassList();
-                    previousGroups.Add(fg);
-                    return aggregateResult;
-                }).ToList();
-            }
+            var aggregateResults = Criteria.Aggregates.Any() ? FetchAggregates(finalGroups) : null;
 
             // sorting.
-            finalGroups.ForEach(fg =>
-            {
-                Criteria.Sorts.Insert(0, new Sort()
-                {
-                    Path = fg.Path,
-                    Ascending = fg.Ascending
-                });
-            });
+            finalGroups.ForEach(fg => Criteria.Sorts.Insert(0, new Sort(fg.Path, fg.Ascending)));
 
+            // apply sorting and paging.
             ApplySorting<T>();
             ApplyPaging<T>();
 
-            // now get the data grouped.
+            // create group & select expression.
             CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb => finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}")));
             CurrentQueryable = CurrentQueryable.Select(sb =>
             {
@@ -85,12 +49,13 @@ namespace PoweredSoft.DynamicQuery
                 sb.ToList("Records");
             });
 
+            // loop through the grouped records.
             var groupRecords = CurrentQueryable.ToDynamicClassList();
             result.Data = groupRecords.Select((groupRecord, groupRecordIndex) =>
             {
                 var groupRecordResult = new GroupQueryResult();
-                GroupQueryResult previous = null;
-
+                List<GroupQueryResult> previousGroupResults = new List<GroupQueryResult>();
+                List<IGroup> previousGroups = new List<IGroup>();
                 Criteria.Groups.ForEach((g, gi) =>
                 {
                     bool isFirst = gi == 0;
@@ -99,16 +64,25 @@ namespace PoweredSoft.DynamicQuery
                     cgrr.GroupPath = g.Path;
                     cgrr.GroupValue = groupRecord.GetDynamicPropertyValue($"Key_{gi}");
 
+                 
 
                     if (!isLast)
                         cgrr.Data = new List<object>();
                     else
                         cgrr.Data = groupRecord.GetDynamicPropertyValue<List<T>>("Records").Cast<object>().ToList();
 
-                    if (previous != null)
-                        previous.Data.Add(cgrr);
+                    if (previousGroupResults.Any())
+                        previousGroupResults.Last().Data.Add(cgrr);
 
-                    previous = cgrr;
+                    previousGroupResults.Add(cgrr);
+                    previousGroups.Add(g);
+
+                    // find aggregates for this group.
+                    if (Criteria.Aggregates.Any())
+                    {
+                        var matchingAggregate = FindMatchingAggregateResult(aggregateResults, previousGroups, previousGroupResults);
+                        cgrr.Aggregates = new List<IAggregateResult>();
+                    }
                 });
 
                 return (object)groupRecordResult;
@@ -117,7 +91,57 @@ namespace PoweredSoft.DynamicQuery
             return result;
         }
 
+        private DynamicClass FindMatchingAggregateResult(List<List<DynamicClass>> aggregateResults, List<IGroup> groups, List<GroupQueryResult> groupResults)
+        {
+            var groupIndex = groupResults.Count - 1;
+            var aggregateLevel = aggregateResults[groupIndex];
 
+            var ret = aggregateLevel.FirstOrDefault(al =>
+            {
+                for (var i = 0; i < groups.Count; i++)
+                {
+                    if (!al.GetDynamicPropertyValue($"Key_{i}").Equals(groupResults[i].GroupValue))
+                        return false;
+                }
+
+                return true;
+            });
+            return ret;
+        }
+
+
+        private List<List<DynamicClass>> FetchAggregates(List<IGroup> finalGroups)
+        {
+            List<List<DynamicClass>> aggregateResults;
+            var previousGroups = new List<IGroup>();
+            aggregateResults = finalGroups.Select(fg =>
+            {
+                var groupExpression = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
+                {
+                    var groupKeyIndex = -1;
+                    previousGroups.ForEach(pg => gb.Path(pg.Path, $"Key_{++groupKeyIndex}"));
+                    gb.Path(fg.Path, $"Key_{++groupKeyIndex}");
+                });
+
+                var selectExpression = groupExpression.Select(sb =>
+                {
+                    var groupKeyIndex = -1;
+                    previousGroups.ForEach(pg => sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}"));
+                    sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}");
+                    Criteria.Aggregates.ForEach(a =>
+                    {
+                        var selectType = ResolveSelectFrom(a.Type);
+                        var pathCleaned = a.Path?.Replace(".", "");
+                        sb.Aggregate(a.Path, selectType, $"Agg_{a.Type}_{pathCleaned}");
+                    });
+                });
+
+                var aggregateResult = selectExpression.ToDynamicClassList();
+                previousGroups.Add(fg);
+                return aggregateResult;
+            }).ToList();
+            return aggregateResults;
+        }
 
         protected virtual IQueryExecutionResult ExecuteNoGrouping<T>()
         {
