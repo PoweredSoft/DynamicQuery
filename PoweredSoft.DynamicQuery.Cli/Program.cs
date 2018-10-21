@@ -8,6 +8,7 @@ using Newtonsoft.Json.Converters;
 namespace PoweredSoft.DynamicQuery.Cli
 {
     public class PersonQueryInterceptor : IQueryInterceptor
+        , IAggregateInterceptor
         //, IBeforeQueryAlteredInterceptor<Person>
         //, IFilterInterceptor
     {
@@ -40,6 +41,13 @@ namespace PoweredSoft.DynamicQuery.Cli
 
             return filter;
         }
+
+        public IAggregate InterceptAggregate(IAggregate aggregate)
+        {
+            if (aggregate.Path == nameof(Person.AgeStr))
+                return new Aggregate {Type = aggregate.Type, Path = nameof(Person.Age)};
+            return aggregate;
+        }
     }
 
     public class Person
@@ -49,6 +57,7 @@ namespace PoweredSoft.DynamicQuery.Cli
         public string LastName { get; set; }
         public int Age { get; set; }
         public string Sexe { get; set; }
+        public string AgeStr => $"{Age} years old";
     }
 
     public class OtherClass
@@ -69,7 +78,7 @@ namespace PoweredSoft.DynamicQuery.Cli
         {
             var list = new List<Person>()
             {
-                new Person{ Id = 1, FirstName = "David", LastName = "Lebee", Sexe = "Male", Age = 29},
+                new Person{ Id = 1, FirstName = "David", LastName = "Lebee", Sexe = "Male", Age = 29 },
                 new Person{ Id = 2, FirstName = "Michaela", LastName = "Lebee", Sexe = "Female", Age = 29},
                 new Person{ Id = 3, FirstName = "Zohra", LastName = "Lebee", Sexe = "Female", Age = 20},
                 new Person{ Id = 4, FirstName = "Eric", LastName = "Vickar", Sexe = "Male", Age = 30},
@@ -90,7 +99,7 @@ namespace PoweredSoft.DynamicQuery.Cli
             criteria.Aggregates = new List<IAggregate>()
             {
                 new Aggregate { Type = AggregateType.Count },
-                new Aggregate { Path = "Age", Type = AggregateType.Avg }
+                new Aggregate { Path = "AgeStr", Type = AggregateType.Avg }
             };;
 
             var handler = new QueryHandler();

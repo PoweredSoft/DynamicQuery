@@ -36,7 +36,7 @@ namespace PoweredSoft.DynamicQuery
             var finalGroups = Criteria.Groups.Select(g => InterceptGroup<T>(g)).ToList();
 
             // get the aggregates.
-            var aggregateResults = Criteria.Aggregates.Any() ? FetchAggregates(finalGroups) : null;
+            var aggregateResults = FetchAggregates<T>(finalGroups);
 
             // sorting.
             finalGroups.ForEach(fg => Criteria.Sorts.Insert(0, new Sort(fg.Path, fg.Ascending)));
@@ -101,11 +101,11 @@ namespace PoweredSoft.DynamicQuery
                 return (object)groupRecordResult;
             }).ToList();
 
-            result.Aggregates = CalculateTotalAggregate(queryableAfterFilters);
+            result.Aggregates = CalculateTotalAggregate<T>(queryableAfterFilters);
             return result;
         }
 
-        protected virtual List<IAggregateResult> CalculateTotalAggregate(IQueryable queryableAfterFilters)
+        protected virtual List<IAggregateResult> CalculateTotalAggregate<T>(IQueryable queryableAfterFilters)
         {
             if (!Criteria.Aggregates.Any())
                 return null;
@@ -115,8 +115,9 @@ namespace PoweredSoft.DynamicQuery
             {
                 Criteria.Aggregates.ForEach((a, index) =>
                 {
-                    var selectType = ResolveSelectFrom(a.Type);
-                    sb.Aggregate(a.Path, selectType, $"Agg_{index}");
+                    var fa = InterceptAggregate<T>(a);
+                    var selectType = ResolveSelectFrom(fa.Type);
+                    sb.Aggregate(fa.Path, selectType, $"Agg_{index}");
                 });
             });
 
@@ -153,8 +154,11 @@ namespace PoweredSoft.DynamicQuery
         }
 
 
-        private List<List<DynamicClass>> FetchAggregates(List<IGroup> finalGroups)
+        private List<List<DynamicClass>> FetchAggregates<T>(List<IGroup> finalGroups)
         {
+            if (!Criteria.Aggregates.Any())
+                return null;
+
             List<List<DynamicClass>> aggregateResults;
             var previousGroups = new List<IGroup>();
             aggregateResults = finalGroups.Select(fg =>
@@ -173,8 +177,9 @@ namespace PoweredSoft.DynamicQuery
                     sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}");
                     Criteria.Aggregates.ForEach((a, ai) =>
                     {
-                        var selectType = ResolveSelectFrom(a.Type);
-                        sb.Aggregate(a.Path, selectType, $"Agg_{ai}");
+                        var fa = InterceptAggregate<T>(a);
+                        var selectType = ResolveSelectFrom(fa.Type);
+                        sb.Aggregate(fa.Path, selectType, $"Agg_{ai}");
                     });
                 });
 
@@ -202,7 +207,7 @@ namespace PoweredSoft.DynamicQuery
             
             // the data.
             result.Data = CurrentQueryable.ToObjectList();
-            result.Aggregates = CalculateTotalAggregate(afterFilterQueryable);
+            result.Aggregates = CalculateTotalAggregate<T>(afterFilterQueryable);
 
             return result;
         }

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using PoweredSoft.DynamicLinq.Fluent;
@@ -86,6 +87,14 @@ namespace PoweredSoft.DynamicQuery
                 result.NumberOfPages = result.TotalRecords / Criteria.PageSize + (result.TotalRecords % Criteria.PageSize != 0 ? 1 : 0);
         }
 
+        protected virtual IAggregate InterceptAggregate<T>(IAggregate aggregate)
+        {
+            var ret = Interceptors
+                .Where(t => t is IAggregateInterceptor)
+                .Cast<IAggregateInterceptor>()
+                .Aggregate(aggregate, (prev, inter) => inter.InterceptAggregate(prev));
+            return ret;
+        }
 
         protected virtual List<ISort> InterceptSort<T>(ISort sort)
         {
