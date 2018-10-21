@@ -174,7 +174,6 @@ namespace PoweredSoft.DynamicQuery
                     Criteria.Aggregates.ForEach((a, ai) =>
                     {
                         var selectType = ResolveSelectFrom(a.Type);
-                        var pathCleaned = a.Path?.Replace(".", "");
                         sb.Aggregate(a.Path, selectType, $"Agg_{ai}");
                     });
                 });
