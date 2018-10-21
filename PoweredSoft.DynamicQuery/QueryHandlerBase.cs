@@ -49,7 +49,7 @@ namespace PoweredSoft.DynamicQuery
         }
 
 
-        protected virtual void ApplyNoGroupingPaging<T>()
+        protected virtual void ApplyPaging<T>()
         {
             if (!HasPaging)
                 return;
@@ -59,7 +59,7 @@ namespace PoweredSoft.DynamicQuery
             CurrentQueryable = q.Skip(skip).Take(Criteria.PageSize.Value);
         }
 
-        protected virtual void ApplyNoGroupingSorts<T>()
+        protected virtual void ApplySorting<T>()
         {
             if (Criteria.Sorts?.Any() != true)
             {

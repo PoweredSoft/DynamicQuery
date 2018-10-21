@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using PoweredSoft.DynamicLinq;
+using PoweredSoft.DynamicLinq.Fluent;
 using PoweredSoft.DynamicQuery.Core;
 
 namespace PoweredSoft.DynamicQuery
@@ -26,30 +27,72 @@ namespace PoweredSoft.DynamicQuery
             var result = new GroupedQueryExecutionResult();
             result.TotalRecords = CurrentQueryable.LongCount();
 
-            Criteria.Groups.ForEach(group =>
-            {
-                var finalGroup = InterceptGroup<T>(group);
-                var groupCleanedPath = group.Path.Replace(".", "");
-                CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
-                {
-                    gb.Path(finalGroup.Path);
-                });
+            // intercept groups in advance to avoid doing it more than once :)
+            var finalGroups = Criteria.Groups.Select(g => InterceptGroup<T>(g)).ToList();
 
-                CurrentQueryable = CurrentQueryable.Select(sb =>
+            // get the aggregates.
+            List<List<DynamicClass>> aggregateResults = null;
+            if (Criteria.Aggregates.Any())
+            {
+                var previousGroups = new List<IGroup>();
+                aggregateResults = finalGroups.Select(fg =>
                 {
-                    sb.ToList("Data");
-                    sb.Key($"Group_{groupCleanedPath}", group.Path);
-                    Criteria.Aggregates.ForEach(a =>
+                    var groupExpression = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
                     {
-                        var selectType = ResolveSelectFrom(a.Type);
-                        var pathCleaned = a.Path.Replace(".", "");
-                        sb.Aggregate(a.Path, selectType, $"Agg_{a.Type}_{pathCleaned}");
+                        previousGroups.ForEach(pg =>
+                        {
+                            var previousGroupCleanedPath = pg.Path.Replace(".", "");
+                            gb.Path(pg.Path, $"Key_{previousGroupCleanedPath}");
+                        });
+                        var cleanedPath = fg.Path.Replace(".", "");
+                        gb.Path(fg.Path, $"Key_{cleanedPath}");
                     });
+
+                    var selectExpression = groupExpression.Select(sb =>
+                    {
+                        previousGroups.ForEach(pg => sb.Key(pg.Path));
+                        sb.Key(fg.Path);
+                        Criteria.Aggregates.ForEach(a =>
+                        {
+                            var selectType = ResolveSelectFrom(a.Type);
+                            var pathCleaned = a.Path?.Replace(".", "");
+                            sb.Aggregate(a.Path, selectType, $"Agg_{a.Type}_{pathCleaned}");
+                        });
+                    });
+
+                    var aggregateResult = selectExpression.ToDynamicClassList();
+                    previousGroups.Add(fg);
+                    return aggregateResult;
+                }).ToList();
+            }
+
+            // sorting.
+            finalGroups.ForEach(fg =>
+            {
+                Criteria.Sorts.Insert(0, new Sort()
+                {
+                    Path = fg.Path,
+                    Ascending = fg.Ascending
                 });
             });
 
+            ApplySorting<T>();
+            ApplyPaging<T>();
+
+            // now get the data grouped.
+            CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb => finalGroups.ForEach(fg => gb.Path(fg.Path)));
+            CurrentQueryable = CurrentQueryable.Select(sb =>
+            {
+                finalGroups.ForEach(fg => sb.Key(fg.Path));
+                sb.ToList("Records");
+            });
+
+            var temp = CurrentQueryable.ToDynamicClassList();
+
             return result;
         }
+
+
 
 
         protected virtual IQueryExecutionResult ExecuteNoGrouping<T>()
@@ -60,8 +103,8 @@ namespace PoweredSoft.DynamicQuery
             result.TotalRecords = CurrentQueryable.LongCount();
 
             // sorts and paging.
-            ApplyNoGroupingSorts<T>();
-            ApplyNoGroupingPaging<T>();
+            ApplySorting<T>();
+            ApplyPaging<T>();
             
             // the data.
             result.Data = CurrentQueryable.ToObjectList();
