@@ -84,10 +84,9 @@ namespace PoweredSoft.DynamicQuery
                     {
                         var matchingAggregate = FindMatchingAggregateResult(aggregateResults, previousGroups, previousGroupResults);
                         cgrr.Aggregates = new List<IAggregateResult>();
-                        Criteria.Aggregates.ForEach(a =>
+                        Criteria.Aggregates.ForEach((a, ai) =>
                         {
-                            var pathCleaned = a.Path?.Replace(".", "");
-                            var key = $"Agg_{a.Type}_{pathCleaned}";
+                            var key = $"Agg_{ai}";
                             var aggregateResult = new AggregateResult
                             {
                                 Path = a.Path,
@@ -172,11 +171,11 @@ namespace PoweredSoft.DynamicQuery
                     var groupKeyIndex = -1;
                     previousGroups.ForEach(pg => sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}"));
                     sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}");
-                    Criteria.Aggregates.ForEach(a =>
+                    Criteria.Aggregates.ForEach((a, ai) =>
                     {
                         var selectType = ResolveSelectFrom(a.Type);
                         var pathCleaned = a.Path?.Replace(".", "");
-                        sb.Aggregate(a.Path, selectType, $"Agg_{a.Type}_{pathCleaned}");
+                        sb.Aggregate(a.Path, selectType, $"Agg_{ai}");
                     });
                 });
 
