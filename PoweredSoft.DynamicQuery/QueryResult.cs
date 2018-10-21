@@ -14,6 +14,8 @@ namespace PoweredSoft.DynamicQuery
         public string Path { get; set; }
         public AggregateType Type { get; set; }
         public object Value { get; set; }
+
+        public bool ShouldSerializePath() => !string.IsNullOrWhiteSpace(Path);
     }
 
     // part of a result.

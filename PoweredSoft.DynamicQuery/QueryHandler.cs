@@ -82,6 +82,18 @@ namespace PoweredSoft.DynamicQuery
                     {
                         var matchingAggregate = FindMatchingAggregateResult(aggregateResults, previousGroups, previousGroupResults);
                         cgrr.Aggregates = new List<IAggregateResult>();
+                        Criteria.Aggregates.ForEach(a =>
+                        {
+                            var pathCleaned = a.Path?.Replace(".", "");
+                            var key = $"Agg_{a.Type}_{pathCleaned}";
+                            var aggregateResult = new AggregateResult
+                            {
+                                Path = a.Path,
+                                Type = a.Type,
+                                Value = matchingAggregate.GetDynamicPropertyValue(key)
+                            };
+                            cgrr.Aggregates.Add(aggregateResult);
+                        });
                     }
                 });
 
