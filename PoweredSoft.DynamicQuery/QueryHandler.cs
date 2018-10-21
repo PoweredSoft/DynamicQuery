@@ -25,7 +25,11 @@ namespace PoweredSoft.DynamicQuery
         protected virtual IQueryExecutionResult ExecuteGrouping<T>()
         {
             var result = new QueryExecutionResult();
-            result.TotalRecords = CurrentQueryable.LongCount();
+
+            // preserve queryable.
+            var queryableAfterFilters = CurrentQueryable;
+
+            result.TotalRecords = queryableAfterFilters.LongCount();
             CalculatePageCount(result);
 
             // intercept groups in advance to avoid doing it more than once :)
@@ -64,8 +68,6 @@ namespace PoweredSoft.DynamicQuery
                     cgrr.GroupPath = g.Path;
                     cgrr.GroupValue = groupRecord.GetDynamicPropertyValue($"Key_{gi}");
 
-                 
-
                     if (!isLast)
                         cgrr.Data = new List<object>();
                     else
@@ -100,7 +102,37 @@ namespace PoweredSoft.DynamicQuery
                 return (object)groupRecordResult;
             }).ToList();
 
+            result.Aggregates = CalculateTotalAggregate(queryableAfterFilters);
             return result;
+        }
+
+        protected virtual List<IAggregateResult> CalculateTotalAggregate(IQueryable queryableAfterFilters)
+        {
+            if (!Criteria.Aggregates.Any())
+                return null;
+
+            var groupExpression = queryableAfterFilters.EmptyGroupBy(QueryableUnderlyingType);
+            var selectExpression = groupExpression.Select(sb =>
+            {
+                Criteria.Aggregates.ForEach((a, index) =>
+                {
+                    var selectType = ResolveSelectFrom(a.Type);
+                    sb.Aggregate(a.Path, selectType, $"Agg_{index}");
+                });
+            });
+
+            var aggregateResult = selectExpression.ToDynamicClassList().First();
+            var ret = new List<IAggregateResult>();
+            Criteria.Aggregates.ForEach((a, index) =>
+            {
+                ret.Add(new AggregateResult()
+                {
+                    Path = a.Path,
+                    Type = a.Type,
+                    Value = aggregateResult.GetDynamicPropertyValue($"Agg_{index}")
+                });
+            });
+            return ret;
         }
 
         private DynamicClass FindMatchingAggregateResult(List<List<DynamicClass>> aggregateResults, List<IGroup> groups, List<GroupQueryResult> groupResults)
@@ -159,8 +191,11 @@ namespace PoweredSoft.DynamicQuery
         {
             var result = new QueryExecutionResult();
 
+            // after filter queryable
+            var afterFilterQueryable = CurrentQueryable;
+
             // total records.
-            result.TotalRecords = CurrentQueryable.LongCount();
+            result.TotalRecords = afterFilterQueryable.LongCount();
             CalculatePageCount(result);
 
             // sorts and paging.
@@ -169,7 +204,7 @@ namespace PoweredSoft.DynamicQuery
             
             // the data.
             result.Data = CurrentQueryable.ToObjectList();
-
+            result.Aggregates = CalculateTotalAggregate(afterFilterQueryable);
 
             return result;
         }
