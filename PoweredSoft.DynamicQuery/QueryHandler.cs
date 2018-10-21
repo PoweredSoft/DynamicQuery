@@ -39,19 +39,16 @@ namespace PoweredSoft.DynamicQuery
                 {
                     var groupExpression = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
                     {
-                        previousGroups.ForEach(pg =>
-                        {
-                            var previousGroupCleanedPath = pg.Path.Replace(".", "");
-                            gb.Path(pg.Path, $"Key_{previousGroupCleanedPath}");
-                        });
-                        var cleanedPath = fg.Path.Replace(".", "");
-                        gb.Path(fg.Path, $"Key_{cleanedPath}");
+                        var groupKeyIndex = -1;
+                        previousGroups.ForEach(pg =>gb.Path(pg.Path, $"Key_{++groupKeyIndex}"));
+                        gb.Path(fg.Path, $"Key_{++groupKeyIndex}");
                     });
 
                     var selectExpression = groupExpression.Select(sb =>
                     {
-                        previousGroups.ForEach(pg => sb.Key(pg.Path));
-                        sb.Key(fg.Path);
+                        var groupKeyIndex = -1;
+                        previousGroups.ForEach(pg => sb.Key($"Key_{++groupKeyIndex}"));
+                        sb.Key($"Key_{++groupKeyIndex}");
                         Criteria.Aggregates.ForEach(a =>
                         {
                             var selectType = ResolveSelectFrom(a.Type);
@@ -80,10 +77,10 @@ namespace PoweredSoft.DynamicQuery
             ApplyPaging<T>();
 
             // now get the data grouped.
-            CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb => finalGroups.ForEach(fg => gb.Path(fg.Path)));
+            CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb => finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}")));
             CurrentQueryable = CurrentQueryable.Select(sb =>
             {
-                finalGroups.ForEach(fg => sb.Key(fg.Path));
+                finalGroups.ForEach((fg, index) => sb.Key($"Key_{index}"));
                 sb.ToList("Records");
             });
 

@@ -79,7 +79,7 @@ namespace PoweredSoft.DynamicQuery.Cli
             var queryable = list.AsQueryable();
             var criteria = new QueryCriteria();
             criteria.Page = 1;
-            criteria.PageSize = 10;
+            criteria.PageSize = 2;
 
             criteria.Groups = new List<IGroup>()
             {
