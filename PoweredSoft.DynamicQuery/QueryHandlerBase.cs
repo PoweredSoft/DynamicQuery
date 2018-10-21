@@ -75,6 +75,18 @@ namespace PoweredSoft.DynamicQuery
             });
         }
 
+        protected virtual void CalculatePageCount(IQueryExecutionResult result)
+        {
+            if (!HasPaging)
+                return;
+
+            if (result.TotalRecords < Criteria.PageSize)
+                result.NumberOfPages = 1;
+            else
+                result.NumberOfPages = result.TotalRecords / Criteria.PageSize + (result.TotalRecords % Criteria.PageSize != 0 ? 1 : 0);
+        }
+
+
         protected virtual List<ISort> InterceptSort<T>(ISort sort)
         {
             var original = new List<ISort>()

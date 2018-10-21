@@ -24,8 +24,9 @@ namespace PoweredSoft.DynamicQuery
 
         protected virtual IQueryExecutionResult ExecuteGrouping<T>()
         {
-            var result = new GroupedQueryExecutionResult();
+            var result = new QueryExecutionResult();
             result.TotalRecords = CurrentQueryable.LongCount();
+            CalculatePageCount(result);
 
             // intercept groups in advance to avoid doing it more than once :)
             var finalGroups = Criteria.Groups.Select(g => InterceptGroup<T>(g)).ToList();
@@ -48,7 +49,7 @@ namespace PoweredSoft.DynamicQuery
                     {
                         var groupKeyIndex = -1;
                         previousGroups.ForEach(pg => sb.Key($"Key_{++groupKeyIndex}"));
-                        sb.Key($"Key_{++groupKeyIndex}");
+                        sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}");
                         Criteria.Aggregates.ForEach(a =>
                         {
                             var selectType = ResolveSelectFrom(a.Type);
@@ -80,15 +81,41 @@ namespace PoweredSoft.DynamicQuery
             CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb => finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}")));
             CurrentQueryable = CurrentQueryable.Select(sb =>
             {
-                finalGroups.ForEach((fg, index) => sb.Key($"Key_{index}"));
+                finalGroups.ForEach((fg, index) => sb.Key($"Key_{index}", $"Key_{index}"));
                 sb.ToList("Records");
             });
 
-            var temp = CurrentQueryable.ToDynamicClassList();
+            var groupRecords = CurrentQueryable.ToDynamicClassList();
+            result.Data = groupRecords.Select((groupRecord, groupRecordIndex) =>
+            {
+                var groupRecordResult = new GroupQueryResult();
+                GroupQueryResult previous = null;
+
+                Criteria.Groups.ForEach((g, gi) =>
+                {
+                    bool isFirst = gi == 0;
+                    bool isLast = Criteria.Groups.Count - 1 == gi;
+                    var cgrr = isFirst ? groupRecordResult : new GroupQueryResult();
+                    cgrr.GroupPath = g.Path;
+                    cgrr.GroupValue = groupRecord.GetDynamicPropertyValue($"Key_{gi}");
+
+
+                    if (!isLast)
+                        cgrr.Data = new List<object>();
+                    else
+                        cgrr.Data = groupRecord.GetDynamicPropertyValue<List<T>>("Records").Cast<object>().ToList();
+
+                    if (previous != null)
+                        previous.Data.Add(cgrr);
+
+                    previous = cgrr;
+                });
+
+                return (object)groupRecordResult;
+            }).ToList();
 
             return result;
         }
-
 
 
 
@@ -98,6 +125,7 @@ namespace PoweredSoft.DynamicQuery
 
             // total records.
             result.TotalRecords = CurrentQueryable.LongCount();
+            CalculatePageCount(result);
 
             // sorts and paging.
             ApplySorting<T>();
@@ -106,14 +134,6 @@ namespace PoweredSoft.DynamicQuery
             // the data.
             result.Data = CurrentQueryable.ToObjectList();
 
-            // if there is paging.
-            if (HasPaging)
-            {
-                if (result.TotalRecords < Criteria.PageSize)
-                    result.NumberOfPages = 1;
-                else
-                    result.NumberOfPages = result.TotalRecords / Criteria.PageSize + (result.TotalRecords % Criteria.PageSize != 0 ? 1 : 0);
-            }
 
             return result;
         }

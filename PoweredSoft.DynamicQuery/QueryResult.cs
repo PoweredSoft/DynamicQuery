@@ -25,26 +25,17 @@ namespace PoweredSoft.DynamicQuery
         public bool ShouldSerializeAggregates() => Aggregates != null;
     }
 
-    // not grouped.
+    // just result
     public class QueryExecutionResult : QueryResult, IQueryExecutionResult
     {
         public long TotalRecords { get; set; }
         public long? NumberOfPages { get; set; }
     }
 
-    // grouped.
+    // group result.
     public class GroupQueryResult : QueryResult, IGroupQueryResult
     {
         public string GroupPath { get; set; }
         public object GroupValue { get; set; }
-
-        public IEnumerable<IQueryResult> GroupItems => Data.Cast<IQueryResult>();
-        public bool ShouldSerializeGroupItems() => false;
-    }
-
-    public class GroupedQueryExecutionResult : GroupQueryResult, IQueryExecutionResult
-    {
-        public long TotalRecords { get; set; }
-        public long? NumberOfPages { get; set; }
     }
 }
