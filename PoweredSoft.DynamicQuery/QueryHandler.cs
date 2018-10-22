@@ -164,10 +164,9 @@ namespace PoweredSoft.DynamicQuery
         {
             if (!Criteria.Aggregates.Any())
                 return null;
-
-            List<List<DynamicClass>> aggregateResults;
+            
             var previousGroups = new List<IGroup>();
-            aggregateResults = finalGroups.Select(fg =>
+            var ret = finalGroups.Select(fg =>
             {
                 var groupExpression = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
                 {
@@ -193,7 +192,7 @@ namespace PoweredSoft.DynamicQuery
                 previousGroups.Add(fg);
                 return aggregateResult;
             }).ToList();
-            return aggregateResults;
+            return ret;
         }
 
         protected virtual IQueryExecutionResult ExecuteNoGrouping<T>()
