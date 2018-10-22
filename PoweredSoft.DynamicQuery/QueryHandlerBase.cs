@@ -96,6 +96,36 @@ namespace PoweredSoft.DynamicQuery
             return ret;
         }
 
+        protected virtual List<object> InterceptConvertTo<T>(List<T> entities)
+        {
+            var objects = entities.Cast<object>().ToList();
+            for (var i = 0; i < objects.Count; i++)
+                objects[i] = InterceptConvertToObject<T>(objects[i]);
+
+            return objects;
+        }
+
+        protected virtual object InterceptConvertToObject<T>(object o)
+        {
+            o = Interceptors
+                .Where(t => t is IQueryConvertInterceptor)
+                .Cast<IQueryConvertInterceptor>()
+                .Aggregate(o, (prev, interceptor) => interceptor.InterceptResultTo(prev));
+
+            o = Interceptors
+                .Where(t => t is IQueryConvertInterceptor<T>)
+                .Cast<IQueryConvertInterceptor<T>>()
+                .Aggregate(o, (prev, interceptor) =>
+                {
+                    if (prev is T)
+                        return interceptor.InterceptResultTo((T)prev);
+
+                    return o;
+                });
+
+            return o;
+        }
+
         protected virtual List<ISort> InterceptSort<T>(ISort sort)
         {
             var original = new List<ISort>()

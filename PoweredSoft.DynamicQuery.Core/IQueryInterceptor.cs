@@ -6,6 +6,4 @@ namespace PoweredSoft.DynamicQuery.Core
     {
 
     }
-
-   
 }

@@ -9,6 +9,7 @@ namespace PoweredSoft.DynamicQuery.Cli
 {
     public class PersonQueryInterceptor : IQueryInterceptor
         , IAggregateInterceptor
+        , IQueryConvertInterceptor<Person>
         //, IBeforeQueryAlteredInterceptor<Person>
         //, IFilterInterceptor
     {
@@ -44,9 +45,20 @@ namespace PoweredSoft.DynamicQuery.Cli
 
         public IAggregate InterceptAggregate(IAggregate aggregate)
         {
-            if (aggregate.Path == nameof(Person.AgeStr))
+            if (aggregate.Path == nameof(PersonModel.AgeStr))
                 return new Aggregate {Type = aggregate.Type, Path = nameof(Person.Age)};
             return aggregate;
+        }
+
+        public object InterceptResultTo(Person entity)
+        {
+            var personModel = new PersonModel();
+            personModel.Id = entity.Id;
+            personModel.FirstName = entity.FirstName;
+            personModel.LastName = entity.LastName;
+            personModel.Age = entity.Age;
+            personModel.Sex = entity.Sex;
+            return personModel;
         }
     }
 
@@ -56,13 +68,18 @@ namespace PoweredSoft.DynamicQuery.Cli
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int Age { get; set; }
-        public string Sexe { get; set; }
-        public string AgeStr => $"{Age} years old";
+        public string Sex { get; set; }
     }
 
-    public class OtherClass
+    public class PersonModel
     {
-        
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Age { get; set; }
+        public string Sex { get; set; }
+        public string AgeStr => $"{Age} years old";
+        public string FullName => $"{FirstName} {LastName}";
     }
 
     class Program
@@ -78,11 +95,11 @@ namespace PoweredSoft.DynamicQuery.Cli
         {
             var list = new List<Person>()
             {
-                new Person{ Id = 1, FirstName = "David", LastName = "Lebee", Sexe = "Male", Age = 29 },
-                new Person{ Id = 2, FirstName = "Michaela", LastName = "Lebee", Sexe = "Female", Age = 29},
-                new Person{ Id = 3, FirstName = "Zohra", LastName = "Lebee", Sexe = "Female", Age = 20},
-                new Person{ Id = 4, FirstName = "Eric", LastName = "Vickar", Sexe = "Male", Age = 30},
-                new Person{ Id = 5, FirstName = "Susan", LastName = "Vickar", Sexe = "Female", Age = 30},
+                new Person{ Id = 1, FirstName = "David", LastName = "Lebee", Sex = "Male", Age = 29 },
+                new Person{ Id = 2, FirstName = "Michaela", LastName = "Lebee", Sex = "Female", Age = 29},
+                new Person{ Id = 3, FirstName = "Zohra", LastName = "Lebee", Sex = "Female", Age = 20},
+                new Person{ Id = 4, FirstName = "Eric", LastName = "Vickar", Sex = "Male", Age = 30},
+                new Person{ Id = 5, FirstName = "Susan", LastName = "Vickar", Sex = "Female", Age = 30},
             };
 
             var queryable = list.AsQueryable();

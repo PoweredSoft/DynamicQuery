@@ -69,9 +69,15 @@ namespace PoweredSoft.DynamicQuery
                     cgrr.GroupValue = groupRecord.GetDynamicPropertyValue($"Key_{gi}");
 
                     if (!isLast)
+                    {
                         cgrr.Data = new List<object>();
+                    }
                     else
-                        cgrr.Data = groupRecord.GetDynamicPropertyValue<List<T>>("Records").Cast<object>().ToList();
+                    {
+                        var entities = groupRecord.GetDynamicPropertyValue<List<T>>("Records");
+                        var records = InterceptConvertTo<T>(entities);
+                        cgrr.Data = records;
+                    }
 
                     if (previousGroupResults.Any())
                         previousGroupResults.Last().Data.Add(cgrr);
@@ -204,9 +210,13 @@ namespace PoweredSoft.DynamicQuery
             // sorts and paging.
             ApplySorting<T>();
             ApplyPaging<T>();
-            
-            // the data.
-            result.Data = CurrentQueryable.ToObjectList();
+
+            // data.
+            var entities = ((IQueryable<T>)CurrentQueryable).ToList();
+            var records = InterceptConvertTo<T>(entities);
+            result.Data = records;
+
+            // aggregates.
             result.Aggregates = CalculateTotalAggregate<T>(afterFilterQueryable);
 
             return result;
