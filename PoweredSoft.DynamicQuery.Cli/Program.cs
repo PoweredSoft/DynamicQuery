@@ -113,6 +113,8 @@ namespace PoweredSoft.DynamicQuery.Cli
                 //, new Group { Path = "Sexe" }
             };
 
+            
+
             criteria.Aggregates = new List<IAggregate>()
             {
                 new Aggregate { Type = AggregateType.Count },

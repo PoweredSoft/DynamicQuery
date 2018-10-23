@@ -3,13 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DynamicQuery.Core", "PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj", "{E614658D-6852-4405-B5BE-3695C3E96B13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.Core", "PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj", "{E614658D-6852-4405-B5BE-3695C3E96B13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DynamicQuery", "PoweredSoft.DynamicQuery\PoweredSoft.DynamicQuery.csproj", "{A9F74387-6B09-423A-96BC-F8FF345193EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery", "PoweredSoft.DynamicQuery\PoweredSoft.DynamicQuery.csproj", "{A9F74387-6B09-423A-96BC-F8FF345193EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DynamicQuery.Cli", "PoweredSoft.DynamicQuery.Cli\PoweredSoft.DynamicQuery.Cli.csproj", "{7FC0F790-A8B9-4335-8D72-09797DEB0359}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.Cli", "PoweredSoft.DynamicQuery.Cli\PoweredSoft.DynamicQuery.Cli.csproj", "{7FC0F790-A8B9-4335-8D72-09797DEB0359}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicLinq", "..\DynamicLinq\PoweredSoft.DynamicLinq\PoweredSoft.DynamicLinq.csproj", "{E4E954E0-66FA-4D72-979A-FB2EF8356A90}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BD742C81-D26A-466C-AB9B-840996D59FA6}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
