@@ -16,14 +16,15 @@ PoweredSoft.DynamicQuery.Core | <a href="https://www.nuget.org/packages/PoweredS
 ## Criteria
 
 Criteria must implement the following interfaces
-
-Object         | Interface                                                                   | Implementation                                                                    | Example                                                     | Description
----------------|-----------------------------------------------------------------------------|-----------------------------------------------------------------------------------|-------------------------------------------------------------|---------------------------------------
-Query Criteria | [interface](../master/PoweredSoft.DynamicQuery.Core/IQueryCriteria.cs) | [default implemetation](../master/PoweredSoft.DynamicQuery.QueryCriteria.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Wraps the query parameters
-Filter         | [interface](../master/PoweredSoft.DynamicQuery.Core/IFilter.cs)        | [default implemetation](../master/PoweredSoft.DynamicQuery.Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a filter to be executed
-Sort           | [interface](../master/PoweredSoft.DynamicQuery.Core/ISort.cs)          | [default implemetation](../master/PoweredSoft.DynamicQuery.Sort.cs)          | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a sort to be executed
-Group          | [interface](../master/PoweredSoft.DynamicQuery.Core/IGroup.cs)         | [default implemetation](../master/PoweredSoft.DynamicQuery.Group.cs)         | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a group to be executed
-Aggregate      | [interface](../master/PoweredSoft.DynamicQuery.Core/IAggregate.cs)     | [default implemetation](../master/PoweredSoft.DynamicQuery.Aggregate.cs)     | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent an aggregate to be executed
+Object           | Interface                                                                | Implementation                                                               | Example                                                | Description
+-----------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------|--------------------------------------------------------|-----------------------------------------
+Query Criteria   | [interface](../master/PoweredSoft.DynamicQuery.Core/IQueryCriteria.cs)   | [default implemetation](../master/PoweredSoft.DynamicQuery/QueryCriteria.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Wraps the query parameters
+Filter           | [interface](../master/PoweredSoft.DynamicQuery.Core/IFilter.cs)          | [default implemetation](../master/PoweredSoft.DynamicQuery/Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a filter to be executed
+Simple Filter    | [interface](../master/PoweredSoft.DynamicQuery.Core/ISimpleFilter.cs)    | [default implemetation](../master/PoweredSoft.DynamicQuery/Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a simple filter to be executed
+Composite Filter | [interface](../master/PoweredSoft.DynamicQuery.Core/ICompositeFilter.cs) | [default implemetation](../master/PoweredSoft.DynamicQuery/Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a composite filter to be executed
+Sort             | [interface](../master/PoweredSoft.DynamicQuery.Core/ISort.cs)            | [default implemetation](../master/PoweredSoft.DynamicQuery/Sort.cs)          | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a sort to be executed
+Group            | [interface](../master/PoweredSoft.DynamicQuery.Core/IGroup.cs)           | [default implemetation](../master/PoweredSoft.DynamicQuery/Group.cs)         | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a group to be executed
+Aggregate        | [interface](../master/PoweredSoft.DynamicQuery.Core/IAggregate.cs)       | [default implemetation](../master/PoweredSoft.DynamicQuery/Aggregate.cs)     | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent an aggregate to be executed
 
 ### Sample
 
