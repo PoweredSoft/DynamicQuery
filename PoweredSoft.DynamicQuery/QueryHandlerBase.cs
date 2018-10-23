@@ -68,11 +68,18 @@ namespace PoweredSoft.DynamicQuery
                 return;
             }
 
+            bool isAppending = false;
             Criteria.Sorts.ForEach(sort =>
             {
                 var transformedSort = InterceptSort<T>(sort);
                 if (transformedSort.Count == 0)
                     return;
+
+                transformedSort.ForEach(ts =>
+                {
+                    CurrentQueryable = CurrentQueryable.OrderBy(ts.Path, ts.Ascending == false ? QueryOrderByDirection.Descending : QueryOrderByDirection.Ascending, isAppending);
+                    isAppending = true;
+                });
             });
         }
 
