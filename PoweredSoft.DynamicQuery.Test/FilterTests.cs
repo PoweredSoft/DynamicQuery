@@ -5,6 +5,7 @@ using System.Text;
 using PoweredSoft.DynamicQuery.Core;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using Xunit;
+using Xunit.Sdk;
 
 namespace PoweredSoft.DynamicQuery.Test
 {

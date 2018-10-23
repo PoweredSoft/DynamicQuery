@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol;
+using Xunit.Sdk;
 
 namespace PoweredSoft.DynamicQuery.Test.Mock
 {
