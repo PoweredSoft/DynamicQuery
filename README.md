@@ -2,7 +2,7 @@
 
 It's a library that allows you to easily query a queryable using a criteria object.
 
-It allows offers, to intercept the query using **IQueryInterceptor** implementations.
+It also offers, to intercept the query using **IQueryInterceptor** implementations.
 
 ## Getting Started
 
