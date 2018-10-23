@@ -25,7 +25,7 @@ namespace PoweredSoft.DynamicQuery.Test
         {
             public IFilter InterceptFilter(IFilter filter)
             {
-                return new SimpleFilter { Path = "Customer.LastName", Type = FilterType.Contains, Value = "Lebee" };
+                return new SimpleFilter { Path = "Customer.LastName", Type = FilterType.Contains, Value = "Norris" };
             }
         }
 
@@ -50,6 +50,32 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var actual = result.Data;
                 var expected = queryable.Where(t => t.Customer.FirstName == "David").ToList();
+                Assert.Equal(expected, actual);
+            });
+        }
+
+        [Fact]
+        public void Multi()
+        {
+            MockContextFactory.SeedAndTestContextFor("FilterInterceptorTests_Multi", TestSeeders.SimpleSeedScenario, ctx =>
+            {
+                var queryable = ctx.Orders.AsQueryable();
+
+                var criteria = new QueryCriteria()
+                {
+                    Filters = new List<IFilter>
+                    {
+                        new SimpleFilter { Path = "CustomerFirstName", Value = "David", Type = FilterType.Contains }
+                    }
+                };
+
+                var query = new QueryHandler();
+                query.AddInterceptor(new MockFilterInterceptorA());
+                query.AddInterceptor(new MockFilterInterceptorB());
+                var result = query.Execute(queryable, criteria);
+
+                var actual = result.Data;
+                var expected = queryable.Where(t => t.Customer.LastName == "Norris").ToList();
                 Assert.Equal(expected, actual);
             });
         }
