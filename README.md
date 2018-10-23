@@ -23,7 +23,7 @@ Query Criteria   | [interface](../master/PoweredSoft.DynamicQuery.Core/IQueryCri
 Filter           | [interface](../master/PoweredSoft.DynamicQuery.Core/IFilter.cs)          | [default implementation](../master/PoweredSoft.DynamicQuery/Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/FilterTests.cs#L22)   | Represent a filter to be executed
 Simple Filter    | [interface](../master/PoweredSoft.DynamicQuery.Core/ISimpleFilter.cs)    | [default implementation](../master/PoweredSoft.DynamicQuery/Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/FilterTests.cs#L40)   | Represent a simple filter to be executed
 Composite Filter | [interface](../master/PoweredSoft.DynamicQuery.Core/ICompositeFilter.cs) | [default implementation](../master/PoweredSoft.DynamicQuery/Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/FilterTests.cs#L68)   | Represent a composite filter to be executed
-Sort             | [interface](../master/PoweredSoft.DynamicQuery.Core/ISort.cs)            | [default implementation](../master/PoweredSoft.DynamicQuery/Sort.cs)          | [test](../master/PoweredSoft.DynamicQuery.Test/SortTests.md)         | Represent a sort to be executed
+Sort             | [interface](../master/PoweredSoft.DynamicQuery.Core/ISort.cs)            | [default implementation](../master/PoweredSoft.DynamicQuery/Sort.cs)          | [test](../master/PoweredSoft.DynamicQuery.Test/SortTests.cs)         | Represent a sort to be executed
 Group            | [interface](../master/PoweredSoft.DynamicQuery.Core/IGroup.cs)           | [default implementation](../master/PoweredSoft.DynamicQuery/Group.cs)         | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md)               | Represent a group to be executed
 Aggregate        | [interface](../master/PoweredSoft.DynamicQuery.Core/IAggregate.cs)       | [default implementation](../master/PoweredSoft.DynamicQuery/Aggregate.cs)     | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md)               | Represent an aggregate to be executed
 
@@ -78,7 +78,8 @@ public interface IQueryExecutionResult : IQueryResult
 
 ## Interceptors
 
-Interceptors are meant to add hooks at certain part of the query handling to allow alteration of the criterias or the queryable it self.\
+Interceptors are meant to add hooks at certain part of the query handling to allow alteration of the criterias or the queryable it self.
+
 The following is documented in the order of what they are called by the **default** query handler implementation.
 
 > Before the expression is being built
