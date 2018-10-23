@@ -16,8 +16,9 @@ PoweredSoft.DynamicQuery.Core | <a href="https://www.nuget.org/packages/PoweredS
 ## Criteria
 
 Criteria must implement the following interfaces
+
 Object           | Interface                                                                | Implementation                                                               | Example                                                | Description
------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------|--------------------------------------------------------|-----------------------------------------
+-----------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------|--------------------------------------------------------|--------------------------------------------
 Query Criteria   | [interface](../master/PoweredSoft.DynamicQuery.Core/IQueryCriteria.cs)   | [default implemetation](../master/PoweredSoft.DynamicQuery/QueryCriteria.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Wraps the query parameters
 Filter           | [interface](../master/PoweredSoft.DynamicQuery.Core/IFilter.cs)          | [default implemetation](../master/PoweredSoft.DynamicQuery/Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a filter to be executed
 Simple Filter    | [interface](../master/PoweredSoft.DynamicQuery.Core/ISimpleFilter.cs)    | [default implemetation](../master/PoweredSoft.DynamicQuery/Filter.cs)        | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | Represent a simple filter to be executed
