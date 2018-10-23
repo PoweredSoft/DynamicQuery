@@ -93,5 +93,41 @@ namespace PoweredSoft.DynamicQuery.Test
                 Assert.Equal(resultShouldMatch, result.Data);
             });
         }
+
+        [Fact]
+        public void MoreComplexCompositeFilter()
+        {
+            MockContextFactory.SeedAndTestContextFor("FilterTests_MoreComplexCompositeFilter", TestSeeders.SimpleSeedScenario, ctx =>
+            {
+                var resultShouldMatch = ctx.Customers.Where(t => (t.FirstName == "John" || t.LastName == "Norris") && t.FirstName.Contains("o")).ToList();
+
+                var criteria = new QueryCriteria()
+                {
+                    Filters = new List<IFilter>
+                    {
+                        new CompositeFilter()
+                        {
+                            Type = FilterType.Composite,
+                            Filters = new List<IFilter>
+                            {
+                                new SimpleFilter() { Path = "FirstName", Type =  FilterType.Equal, Value = "John" },
+                                new SimpleFilter() { Path = "LastName", Type = FilterType.Equal, Value = "Norris"}
+                            }
+                        },
+                        new SimpleFilter()
+                        {
+                            And = true,
+                            Path = "FirstName",
+                            Type = FilterType.Contains,
+                            Value = "o"
+                        }
+                    }
+                };
+
+                var queryHandler = new QueryHandler();
+                var result = queryHandler.Execute(ctx.Customers, criteria);
+                Assert.Equal(resultShouldMatch, result.Data);
+            });
+        }
     }
 }
