@@ -26,7 +26,7 @@ namespace PoweredSoft.DynamicQuery.Test
         }
 
         [Fact]
-        public void TestPagging()
+        public void TestPaging()
         {
             MockContextFactory.SeedAndTestContextFor("CriteriaTests_TestPagging", TestSeeders.SimpleSeedScenario, ctx =>
             {
