@@ -24,5 +24,24 @@ namespace PoweredSoft.DynamicQuery.Test
                 Assert.Equal(resultShouldMatch, result.Data);
             });
         }
+
+        [Fact]
+        public void TestPagging()
+        {
+            MockContextFactory.SeedAndTestContextFor("CriteriaTests_TestPagging", TestSeeders.SimpleSeedScenario, ctx =>
+            {
+                var resultShouldMatch = ctx.OrderItems.OrderBy(t => t.Id).Skip(5).Take(5).ToList();
+
+                // query handler that is empty should be the same as running to list.
+                var criteria = new QueryCriteria();
+                criteria.Sorts.Add(new Sort("Id"));
+                criteria.Page = 2;
+                criteria.PageSize = 5;
+
+                var queryHandler = new QueryHandler();
+                var result = queryHandler.Execute(ctx.OrderItems, criteria);
+                Assert.Equal(resultShouldMatch, result.Data);
+            });
+        }
     }
 }
