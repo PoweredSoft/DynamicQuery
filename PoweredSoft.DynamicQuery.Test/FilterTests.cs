@@ -10,6 +10,32 @@ namespace PoweredSoft.DynamicQuery.Test
 {
     public class FilterTests
     {
+        private class MockIsChuckFilter : ISimpleFilter
+        {
+            public bool? And { get; set; } = false;
+            public FilterType Type { get; set; } = FilterType.Equal;
+            public string Path { get; set; } = "FirstName";
+            public object Value { get; set; } = "Chuck";
+        }
+
+        [Fact]
+        public void TestInversionOfControl()
+        {
+            MockContextFactory.SeedAndTestContextFor("FilterTests_TestInversionOfControl", TestSeeders.SimpleSeedScenario, ctx =>
+            {
+                var resultShouldMatch = ctx.Customers.Where(t => t.FirstName == "Chuck").ToList();
+
+                var criteria = new QueryCriteria()
+                {
+                    Filters = new List<IFilter> { new MockIsChuckFilter() }
+                };
+
+                var queryHandler = new QueryHandler();
+                var result = queryHandler.Execute(ctx.Customers, criteria);
+                Assert.Equal(resultShouldMatch, result.Data);
+            });
+        }
+
         [Fact]
         public void SimpleFilter()
         {
@@ -17,7 +43,6 @@ namespace PoweredSoft.DynamicQuery.Test
             {
                 var resultShouldMatch = ctx.Items.Where(t => t.Name.EndsWith("Cables")).ToList();
 
-                // query handler that is empty should be the same as running to list.
                 var criteria = new QueryCriteria()
                 {
                     Filters = new List<IFilter>
@@ -37,25 +62,29 @@ namespace PoweredSoft.DynamicQuery.Test
             });
         }
 
-        private class MockIsChuckFilter : ISimpleFilter
-        {
-            public bool? And { get; set; } = false;
-            public FilterType Type { get; set; } = FilterType.Equal;
-            public string Path { get; set; } = "FirstName";
-            public object Value { get; set; } = "Chuck";
-        }
+
 
         [Fact]
-        public void TestInversionOfControl()
+        public void CompositeFilter()
         {
-            MockContextFactory.SeedAndTestContextFor("FilterTests_SimpleFilter", TestSeeders.SimpleSeedScenario, ctx =>
+            MockContextFactory.SeedAndTestContextFor("FilterTests_CompositeFilter", TestSeeders.SimpleSeedScenario, ctx =>
             {
-                var resultShouldMatch = ctx.Customers.Where(t => t.FirstName == "Chuck").ToList();
+                var resultShouldMatch = ctx.Customers.Where(t => t.FirstName == "John" || t.LastName == "Norris").ToList();
 
-                // query handler that is empty should be the same as running to list.
                 var criteria = new QueryCriteria()
                 {
-                    Filters = new List<IFilter> { new MockIsChuckFilter() }
+                    Filters = new List<IFilter>
+                    {
+                        new CompositeFilter()
+                        {
+                            Type = FilterType.Composite,
+                            Filters = new List<IFilter>
+                            {
+                                new SimpleFilter() { Path = "FirstName", Type =  FilterType.Equal, Value = "John" },
+                                new SimpleFilter() { Path = "LastName", Type = FilterType.Equal, Value = "Norris"}
+                            }
+                        }
+                    }
                 };
 
                 var queryHandler = new QueryHandler();
