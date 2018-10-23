@@ -14,7 +14,7 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
 
         public MockContext()
         {
-            
+
         }
 
         public MockContext(DbContextOptions<MockContext> options)

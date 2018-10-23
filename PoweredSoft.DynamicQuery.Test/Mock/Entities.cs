@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PoweredSoft.DynamicQuery.Test.Mock
 {
@@ -6,7 +7,7 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
     {
         public long Id { get; set; }
         public long OrderNum { get; set; }
-        public long Date { get; set; }
+        public DateTime Date { get; set; }
         public long CustomerId { get; set; }
 
         public virtual Customer Customer { get; set; }
@@ -18,11 +19,6 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
         public long Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string AddressLine1 { get; set; }
-        public string AddressLine2 { get; set; }
-        public string City { get; set; }
-        public string ProvinceOrState { get; set; }
-        public string PostalCodeOrZip { get; set; }
 
 
         public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
@@ -43,6 +39,7 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
         public long Quantity { get; set; }
         public decimal PriceAtTheTime { get; set; }
         public long ItemId { get; set; }
+        public long OrderId { get; set; }
 
         public virtual Item Item { get; set; }
         public virtual Order Order { get; set; }
