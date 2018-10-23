@@ -153,11 +153,11 @@ namespace PoweredSoft.DynamicQuery
         {
             CurrentQueryable = Interceptors.Where(t => t is INoSortInterceptor)
                 .Cast<INoSortInterceptor>()
-                .Aggregate(CurrentQueryable, (prev, interceptor) => interceptor.InterceptNoSort(prev));
+                .Aggregate(CurrentQueryable, (prev, interceptor) => interceptor.InterceptNoSort(Criteria, prev));
 
             CurrentQueryable = Interceptors.Where(t => t is INoSortInterceptor<T>)
                 .Cast<INoSortInterceptor<T>>()
-                .Aggregate((IQueryable<T>)CurrentQueryable, (prev, interceptor) => interceptor.InterceptNoSort(prev));
+                .Aggregate((IQueryable<T>)CurrentQueryable, (prev, interceptor) => interceptor.InterceptNoSort(Criteria, prev));
         }
 
 

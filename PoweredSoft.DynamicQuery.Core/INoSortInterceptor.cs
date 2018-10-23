@@ -4,11 +4,11 @@ namespace PoweredSoft.DynamicQuery.Core
 {
     public interface INoSortInterceptor : IQueryInterceptor
     {
-        IQueryable InterceptNoSort(IQueryable queryable);
+        IQueryable InterceptNoSort(IQueryCriteria criteria, IQueryable queryable);
     }
 
     public interface INoSortInterceptor<T> : IQueryInterceptor
     {
-        IQueryable<T> InterceptNoSort(IQueryable<T> queryable);
+        IQueryable<T> InterceptNoSort(IQueryCriteria criteria, IQueryable<T> queryable);
     }
 }
