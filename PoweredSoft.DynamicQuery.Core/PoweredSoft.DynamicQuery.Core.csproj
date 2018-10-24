@@ -1,7 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Powered Softwares Inc.</Copyright>
+    <PackageLicenseUrl>MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/PoweredSoft/DynamicQuery</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery.Core/</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <PackageTags>powered,soft,dynamic,criteria,query,builder</PackageTags>
   </PropertyGroup>
 
 </Project>
