@@ -42,8 +42,8 @@ namespace PoweredSoft.DynamicQuery
         protected virtual IGroup InterceptGroup<T>(IGroup group)
         {
             var ret = Interceptors
-                .Where(t => t is IGroupingInterceptor)
-                .Cast<IGroupingInterceptor>()
+                .Where(t => t is IGroupInterceptor)
+                .Cast<IGroupInterceptor>()
                 .Aggregate(group, (prev, inter) => inter.InterceptGroup(prev));
 
             return ret;

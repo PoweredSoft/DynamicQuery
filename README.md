@@ -100,8 +100,8 @@ Interceptor           | Interface                                               
 ----------------------|------------------------------------------------------------------------------------|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------
 IFilterInterceptor    | [interface](../master/PoweredSoft.DynamicQuery.Core/IFilterInterceptor.cs)    | [test](../master/PoweredSoft.DynamicQuery.Test/FilterInterceptorTests.cs) | This interceptor allows you to change the behavior of a IFilter being applied to the queryable
 ISortInterceptor      | [interface](../master/PoweredSoft.DynamicQuery.Core/ISortInterceptor.cs)      | [test](../master/PoweredSoft.DynamicQuery.Test/SortInterceptorTests.cs) | This interceptor allows you to change the behavior of a ISort being applied to the queryable
-IGroupInterceptor     | [interface](../master/PoweredSoft.DynamicQuery.Core/IGroupInterceptor.cs)     | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | This interceptor allows you to change the behavior of a IGroup being applied to the queryable
-IAggregateInterceptor | [interface](../master/PoweredSoft.DynamicQuery.Core/IAggregateInterceptor.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/TBT.md) | This interceptor allows you to change the behavior of a IAggregate being applied to the queryable
+IGroupInterceptor     | [interface](../master/PoweredSoft.DynamicQuery.Core/IGroupInterceptor.cs)     | [test](../master/PoweredSoft.DynamicQuery.Test/GroupInterceptorTests.cs) | This interceptor allows you to change the behavior of a IGroup being applied to the queryable
+IAggregateInterceptor | [interface](../master/PoweredSoft.DynamicQuery.Core/IAggregateInterceptor.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/AggregateInterceptorTests.cs) | This interceptor allows you to change the behavior of a IAggregate being applied to the queryable
 
 > Post Query execution
 

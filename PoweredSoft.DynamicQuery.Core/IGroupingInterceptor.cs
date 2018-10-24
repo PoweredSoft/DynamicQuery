@@ -1,6 +1,6 @@
 ﻿namespace PoweredSoft.DynamicQuery.Core
 {
-    public interface IGroupingInterceptor : IQueryInterceptor
+    public interface IGroupInterceptor : IQueryInterceptor
     {
         IGroup InterceptGroup(IGroup group);
     }
