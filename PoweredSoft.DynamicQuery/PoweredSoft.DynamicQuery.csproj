@@ -9,6 +9,7 @@
     <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>powered,soft,dynamic,criteria,query,builder</PackageTags>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
