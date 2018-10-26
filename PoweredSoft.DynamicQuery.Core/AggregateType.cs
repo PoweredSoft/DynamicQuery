@@ -5,6 +5,12 @@
         Count,
         Sum,
         Avg,
-        LongCount
+        LongCount,
+        Min,
+        Max,
+        First,
+        FirstOrDefault,
+        Last,
+        LastOrDefault
     }
 }

@@ -21,9 +21,16 @@ namespace PoweredSoft.DynamicQuery.Test
                     .Select(t => new
                     {
                         Count = t.Count(),
+
+                        ItemQuantityMin = t.Min(t2 => t2.Quantity),
+                        ItemQuantityMax = t.Min(t2 => t2.Quantity),
                         ItemQuantityAverage = t.Average(t2 => t2.Quantity),
                         ItemQuantitySum = t.Sum(t2 => t2.Quantity),
-                        AvgOfPrice = t.Average(t2 => t2.PriceAtTheTime)
+                        AvgOfPrice = t.Average(t2 => t2.PriceAtTheTime),
+                        First = t.First(),
+                        FirstOrDefault = t.FirstOrDefault(),
+                        Last = t.Last(),
+                        LastOrDefault = t.LastOrDefault()
                     })
                     .First();
 
@@ -35,7 +42,13 @@ namespace PoweredSoft.DynamicQuery.Test
                         new Aggregate { Type = AggregateType.Count },
                         new Aggregate { Type = AggregateType.Avg, Path = "Quantity" },
                         new Aggregate { Type = AggregateType.Sum, Path = "Quantity" },
-                        new Aggregate { Type = AggregateType.Avg, Path = "PriceAtTheTime"}
+                        new Aggregate { Type = AggregateType.Avg, Path = "PriceAtTheTime"},
+                        new Aggregate { Type = AggregateType.Min, Path = "Quantity"},
+                        new Aggregate { Type = AggregateType.Max, Path = "Quantity" },
+                        new Aggregate { Type = AggregateType.First },
+                        new Aggregate { Type = AggregateType.FirstOrDefault },
+                        new Aggregate { Type = AggregateType.Last },
+                        new Aggregate { Type = AggregateType.LastOrDefault },
                     }
                 };
 
@@ -43,10 +56,23 @@ namespace PoweredSoft.DynamicQuery.Test
                 var result = queryHandler.Execute(ctx.OrderItems, criteria);
 
                 var aggCount = result.Aggregates.First(t => t.Type == AggregateType.Count);
+                var aggFirst = result.Aggregates.First(t => t.Type == AggregateType.First);
+                var aggFirstOrDefault = result.Aggregates.First(t => t.Type == AggregateType.FirstOrDefault);
+                var aggLast = result.Aggregates.First(t => t.Type == AggregateType.Last);
+                var aggLastOrDefault = result.Aggregates.First(t => t.Type == AggregateType.LastOrDefault);
+
+                var aggItemQuantityMin  = result.Aggregates.First(t => t.Type == AggregateType.Min && t.Path == "Quantity");
+                var aggItemQuantityMax = result.Aggregates.First(t => t.Type == AggregateType.Max && t.Path == "Quantity");
                 var aggItemQuantityAverage  = result.Aggregates.First(t => t.Type == AggregateType.Avg && t.Path == "Quantity");
                 var aggItemQuantitySum = result.Aggregates.First(t => t.Type == AggregateType.Sum && t.Path == "Quantity");
                 var aggAvgOfPrice = result.Aggregates.First(t => t.Type == AggregateType.Avg && t.Path == "PriceAtTheTime");
+
                 Assert.Equal(shouldResult.Count, aggCount.Value);
+                Assert.Equal(shouldResult.First?.Id, (aggFirst.Value as OrderItem)?.Id);
+                Assert.Equal(shouldResult.FirstOrDefault?.Id, (aggFirstOrDefault.Value as OrderItem)?.Id);
+                Assert.Equal(shouldResult.Last?.Id, (aggLast.Value as OrderItem)?.Id);
+                Assert.Equal(shouldResult.LastOrDefault?.Id, (aggLastOrDefault.Value as OrderItem)?.Id);
+
                 Assert.Equal(shouldResult.ItemQuantityAverage, aggItemQuantityAverage.Value);
                 Assert.Equal(shouldResult.ItemQuantitySum, aggItemQuantitySum.Value);
                 Assert.Equal(shouldResult.AvgOfPrice, aggAvgOfPrice.Value);

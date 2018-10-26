@@ -46,6 +46,19 @@ namespace PoweredSoft.DynamicQuery.Extensions
                 return SelectTypes.LongCount;
             if (aggregateType == AggregateType.Sum)
                 return SelectTypes.Sum;
+            else if (aggregateType == AggregateType.Min)
+                return SelectTypes.Min;
+            else if (aggregateType == AggregateType.Max)
+                return SelectTypes.Max;
+            else if (aggregateType == AggregateType.First)
+                return SelectTypes.First;
+            else if (aggregateType == AggregateType.FirstOrDefault)
+                return SelectTypes.FirstOrDefault;
+            else if (aggregateType == AggregateType.Last)
+                return SelectTypes.Last;
+            else if (aggregateType == AggregateType.LastOrDefault)
+                return SelectTypes.LastOrDefault;
+
 
             return null;
         }
