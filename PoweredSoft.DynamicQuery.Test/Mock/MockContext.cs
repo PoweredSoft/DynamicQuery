@@ -11,6 +11,7 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<OrderItem> OrderItems { get; set; }
+        public virtual DbSet<Ticket> Tickets { get; set; }
 
         public MockContext()
         {

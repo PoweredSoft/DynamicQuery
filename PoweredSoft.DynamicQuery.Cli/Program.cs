@@ -109,11 +109,9 @@ namespace PoweredSoft.DynamicQuery.Cli
 
             criteria.Groups = new List<IGroup>()
             {
-                new Group { Path = "LastName" }
-                //, new Group { Path = "Sexe" }
+                new Group { Path = "LastName" },
+                new Group { Path = "Sexe" }
             };
-
-            
 
             criteria.Aggregates = new List<IAggregate>()
             {

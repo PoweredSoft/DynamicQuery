@@ -47,5 +47,37 @@ namespace PoweredSoft.DynamicQuery.Test
                 }
             });
         }
+
+        [Fact]
+        public void GroupComplex()
+        {
+            MockContextFactory.SeedAndTestContextFor("GroupTests_Complex", TestSeeders.SeedTicketScenario, ctx =>
+            {
+                var criteria = new QueryCriteria()
+                {
+                    Groups = new List<IGroup>()
+                    {
+                        new Group { Path = "TicketType" },
+                        new Group { Path = "Priority" }
+                    },
+                    Aggregates = new List<IAggregate>()
+                    {
+                        new Aggregate { Type = AggregateType.Count }
+                    }
+                };
+
+                var queryHandler = new QueryHandler();
+                var result = queryHandler.Execute(ctx.Tickets, criteria);
+
+                var firstGroup = result.Data[0] as IGroupQueryResult;
+                Assert.NotNull(firstGroup);
+                var secondGroup = result.Data[1] as IGroupQueryResult;
+                Assert.NotNull(secondGroup);
+
+                var expected = ctx.Tickets.Select(t => t.TicketType).Distinct().Count();
+                var c = result.Data.Cast<IGroupQueryResult>().Select(t => t.GroupValue).Count();
+                Assert.Equal(expected, c);
+            });
+        }
     }
 }

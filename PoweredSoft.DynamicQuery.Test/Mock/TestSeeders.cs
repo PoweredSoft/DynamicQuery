@@ -92,5 +92,48 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
                 ctx.SaveChanges();
             });
         }
+
+        internal static void SeedTicketScenario(string testName)
+        {
+            MockContextFactory.TestContextFor(testName, ctx =>
+            {
+                var faker = new Bogus.Faker<Ticket>()
+                    .RuleFor(t => t.TicketType, (f, u) => f.PickRandom("new", "open", "refused", "closed"))
+                    .RuleFor(t => t.Title, (f, u) => f.Lorem.Sentence())
+                    .RuleFor(t => t.Details, (f, u) => f.Lorem.Paragraph())
+                    .RuleFor(t => t.IsHtml, (f, u) => false)
+                    .RuleFor(t => t.TagList, (f, u) => string.Join(",", f.Commerce.Categories(3)))
+                    .RuleFor(t => t.CreatedDate, (f, u) => f.Date.Recent(100))
+                    .RuleFor(t => t.Owner, (f, u) => f.Person.FullName)
+                    .RuleFor(t => t.AssignedTo, (f, u) => f.Person.FullName)
+                    .RuleFor(t => t.TicketStatus, (f, u) => f.PickRandom(1, 2, 3))
+                    .RuleFor(t => t.LastUpdateBy, (f, u) => f.Person.FullName)
+                    .RuleFor(t => t.LastUpdateDate, (f, u) => f.Date.Soon(5))
+                    .RuleFor(t => t.Priority, (f, u) => f.PickRandom("low", "medium", "high", "critical"))
+                    .RuleFor(t => t.AffectedCustomer, (f, u) => f.PickRandom(true, false))
+                    .RuleFor(t => t.Version, (f, u) => f.PickRandom("1.0.0", "1.1.0", "2.0.0"))
+                    .RuleFor(t => t.ProjectId, (f, u) => f.Random.Number(100))
+                    .RuleFor(t => t.DueDate, (f, u) => f.Date.Soon(5))
+                    .RuleFor(t => t.EstimatedDuration, (f, u) => f.Random.Number(20))
+                    .RuleFor(t => t.ActualDuration, (f, u) => f.Random.Number(20))
+                    .RuleFor(t => t.TargetDate, (f, u) => f.Date.Soon(5))
+                    .RuleFor(t => t.ResolutionDate, (f, u) => f.Date.Soon(5))
+                    .RuleFor(t => t.Type, (f, u) => f.PickRandom(1, 2, 3))
+                    .RuleFor(t => t.ParentId, () => 0)
+                    .RuleFor(t => t.PreferredLanguage, (f, u) => f.PickRandom("fr", "en", "es"))
+                ;
+
+                var fakeModels = new List<Ticket>();
+                for (var i = 0; i < 500; i++)
+                {
+                    var t = faker.Generate();
+                    t.TicketId = i + 1;
+                    fakeModels.Add(t);
+                }
+
+                ctx.AddRange(fakeModels);
+                ctx.SaveChanges();
+            });
+        }
     }
 }
