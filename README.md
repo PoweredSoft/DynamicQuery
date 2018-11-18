@@ -12,8 +12,30 @@ Full Version                  | NuGet                                           
 ------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------:
 PoweredSoft.DynamicQuery      | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery/" target="_blank">[![NuGet](https://img.shields.io/nuget/v/PoweredSoft.DynamicQuery.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery/)</a>                |      ```PM> Install-Package PoweredSoft.DynamicQuery```
 PoweredSoft.DynamicQuery.Core | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery.Core/" target="_blank">[![NuGet](https://img.shields.io/nuget/v/PoweredSoft.DynamicQuery.Core.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery.Core/)</a> | ```PM> Install-Package PoweredSoft.DynamicQuery.Core```
+PoweredSoft.DynamicQuery.AspNetCore | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery.AspNetCore/" target="_blank">[![NuGet](https://img.shields.io/nuget/v/PoweredSoft.DynamicQuery.AspNetCore.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery.AspNetCore/)</a> | ```PM> Install-Package PoweredSoft.DynamicQuery.AspNetCore```
 
-## Sample Web Project - ASP.NET CORE + EF Core
+## Using in ASP.NET Core
+
+The package Asp.net core of dynamic query will help you start to use Dynamic Query faster in your web project.
+
+### How to configure during startup
+
+```csharp
+using PoweredSoft.DynamicQuery.AspNetCore;
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddDynamicQueryDefaultMappings();
+        var minimumDependencyServiceProvider = services.BuildServiceProvider();
+        services.AddMvc().AddDynamicQueryJsonConverter(minimumDependencyServiceProvider);
+    }
+}
+
+```
+
+### Sample Web Project - ASP.NET CORE + EF Core
 
 Visit: https://github.com/PoweredSoft/DynamicQueryAspNetCoreSample
 
