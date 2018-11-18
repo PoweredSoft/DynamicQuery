@@ -35,6 +35,21 @@ public class Startup
 
 ```
 
+> How to use in a controller
+
+```csharp
+[HttpPost]
+public IQueryExecutionResult Read(
+    [FromServices]YourContext context, 
+    [FromServices]IQueryHandler handler,
+    [FromBody]IQueryCriteria criteria)
+{
+    IQueryable<OfSomething> query = context.Somethings;
+    var result = handler.Execute(query, criteria);
+    return result;
+}
+```
+
 ### Sample Web Project - ASP.NET CORE + EF Core
 
 Visit: https://github.com/PoweredSoft/DynamicQueryAspNetCoreSample
