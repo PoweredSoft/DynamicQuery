@@ -38,6 +38,22 @@ public class Startup
 > How to use in a controller
 
 ```csharp
+
+[HttpGet]
+public IQueryExecutionResult Get(
+            [FromServices]YourContext context, 
+            [FromServices]IQueryHandler handler, 
+            [FromServices]IQueryCriteria criteria,
+            int? page = null,
+            int? pageSize = null)
+{
+    criteria.Page = page;
+    criteria.PageSize = pageSize;
+    IQueryable<OfSomething> query = context.Somethings;
+    var result = handler.Execute(query, criteria);
+    return result;
+}
+
 [HttpPost]
 public IQueryExecutionResult Read(
     [FromServices]YourContext context, 
