@@ -1,4 +1,6 @@
-﻿namespace PoweredSoft.DynamicQuery.Core
+﻿using System;
+
+namespace PoweredSoft.DynamicQuery.Core
 {
     public interface IFilter
     {
