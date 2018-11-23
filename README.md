@@ -27,9 +27,9 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddDynamicQueryDefaultMappings();
-        var minimumDependencyServiceProvider = services.BuildServiceProvider();
-        services.AddMvc().AddDynamicQueryJsonConverter(minimumDependencyServiceProvider);
+        services
+            .AddMvc()
+            .AddPoweredSoftDynamicQuery();
     }
 }
 
