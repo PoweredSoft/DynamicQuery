@@ -8,7 +8,7 @@ namespace PoweredSoft.DynamicQuery.AspNetCore
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddDynamicQueryDefaultMappings(this IServiceCollection services)
+        public static IServiceCollection AddPoweredSoftDynamicQuery(this IServiceCollection services)
         {
             services.AddTransient<ISort, Sort>();
             services.AddTransient<IAggregate, Aggregate>();
@@ -17,6 +17,7 @@ namespace PoweredSoft.DynamicQuery.AspNetCore
             services.AddTransient<IGroup, Group>();
             services.AddTransient<IQueryCriteria, QueryCriteria>();
             services.AddTransient<IQueryHandler, QueryHandler>();
+            return services;
         }
     }
 }
