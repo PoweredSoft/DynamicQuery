@@ -9,13 +9,19 @@
     <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>powered,soft,dynamic,criteria,query,builder</PackageTags>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\DynamicLinq\PoweredSoft.DynamicLinq\PoweredSoft.DynamicLinq.csproj" />
     <ProjectReference Include="..\PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.dependencyinjection.abstractions\2.1.1\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
