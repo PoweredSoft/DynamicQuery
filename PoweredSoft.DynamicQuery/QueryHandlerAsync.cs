@@ -12,7 +12,7 @@ namespace PoweredSoft.DynamicQuery
     public class QueryHandlerAsync : QueryHandlerBase, IQueryHandlerAsync
     {
         public IAsyncQueryableFactory AsyncQueryableFactory { get; }
-        internal MethodInfo ExecuteAsyncGeneric = typeof(QueryHandler).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).First(t => t.Name == "ExecuteAsync" && t.IsGenericMethod);
+        internal MethodInfo ExecuteAsyncGeneric = typeof(QueryHandlerAsync).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).First(t => t.Name == "ExecuteAsync" && t.IsGenericMethod);
         internal Task<IQueryExecutionResult> ExecuteAsyncReflected(CancellationToken cancellationToken) => (Task<IQueryExecutionResult>)ExecuteAsyncGeneric.MakeGenericMethod(QueryableUnderlyingType).Invoke(this, new object[] { cancellationToken });
 
         public QueryHandlerAsync(IAsyncQueryableFactory asyncQueryableFactory)
@@ -20,7 +20,7 @@ namespace PoweredSoft.DynamicQuery
             AsyncQueryableFactory = asyncQueryableFactory;
         }
 
-        public Task<IQueryExecutionResult> ExecuteAsync<T>(IQueryable queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken))
+        protected virtual Task<IQueryExecutionResult> ExecuteAsync<T>(CancellationToken cancellationToken = default(CancellationToken))
         {
             CommonBeforeExecute<T>();
             return HasGrouping ? ExecuteAsyncGrouping<T>(cancellationToken) : ExecuteAsyncNoGrouping<T>(cancellationToken);
@@ -120,7 +120,7 @@ namespace PoweredSoft.DynamicQuery
             {
                 IQueryable selectExpression = CreateFetchAggregateSelectExpression<T>(fg, previousGroups);
                 var selectExpressionCasted = selectExpression.Cast<DynamicClass>();
-                var aggregateResult = AsyncQueryableFactory.ToListAsync<DynamicClass>(selectExpressionCasted, cancellationToken);
+                var aggregateResult = AsyncQueryableFactory.ToListAsync(selectExpressionCasted, cancellationToken);
                 previousGroups.Add(fg);
                 return aggregateResult;
             }));
