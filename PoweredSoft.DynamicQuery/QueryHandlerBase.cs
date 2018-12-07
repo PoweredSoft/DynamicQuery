@@ -31,6 +31,13 @@ namespace PoweredSoft.DynamicQuery
             CurrentQueryable = QueryableAtStart;
         }
 
+        protected virtual void CommonBeforeExecute<T>()
+        {
+            ApplyIncludeStrategyInterceptors<T>();
+            ApplyBeforeFilterInterceptors<T>();
+            ApplyFilters<T>();
+        }
+
         public virtual void AddInterceptor(IQueryInterceptor interceptor)
         {
             if (interceptor == null) throw new ArgumentNullException("interceptor");
@@ -81,6 +88,78 @@ namespace PoweredSoft.DynamicQuery
                     isAppending = true;
                 });
             });
+        }
+
+        protected DynamicClass FindMatchingAggregateResult(List<List<DynamicClass>> aggregateResults, List<IGroup> groups, List<IGroupQueryResult> groupResults)
+        {
+            var groupIndex = groupResults.Count - 1;
+            var aggregateLevel = aggregateResults[groupIndex];
+
+            var ret = aggregateLevel.FirstOrDefault(al =>
+            {
+                for (var i = 0; i < groups.Count; i++)
+                {
+                    if (!al.GetDynamicPropertyValue($"Key_{i}").Equals(groupResults[i].GroupValue))
+                        return false;
+                }
+
+                return true;
+            });
+            return ret;
+        }
+
+        protected virtual IQueryable CreateFetchAggregateSelectExpression<T>(IGroup finalGroup, List<IGroup> previousGroups)
+        {
+            var groupExpression = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
+            {
+                var groupKeyIndex = -1;
+                previousGroups.ForEach(pg => gb.Path(pg.Path, $"Key_{++groupKeyIndex}"));
+                gb.Path(finalGroup.Path, $"Key_{++groupKeyIndex}");
+            });
+
+            var selectExpression = groupExpression.Select(sb =>
+            {
+                var groupKeyIndex = -1;
+                previousGroups.ForEach(pg => sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}"));
+                sb.Key($"Key_{++groupKeyIndex}", $"Key_{groupKeyIndex}");
+                Criteria.Aggregates.ForEach((a, ai) =>
+                {
+                    var fa = InterceptAggregate<T>(a);
+                    var selectType = ResolveSelectFrom(fa.Type);
+                    sb.Aggregate(fa.Path, selectType, $"Agg_{ai}");
+                });
+            });
+            return selectExpression;
+        }
+
+        protected virtual List<IAggregateResult> MaterializeCalculateTotalAggregateResult(DynamicClass aggregateResult)
+        {
+            var ret = new List<IAggregateResult>();
+            Criteria.Aggregates.ForEach((a, index) =>
+            {
+                ret.Add(new AggregateResult()
+                {
+                    Path = a.Path,
+                    Type = a.Type,
+                    Value = aggregateResult?.GetDynamicPropertyValue($"Agg_{index}")
+                });
+            });
+            return ret;
+        }
+
+        protected virtual IQueryable CreateTotalAggregateSelectExpression<T>(IQueryable queryableAfterFilters)
+        {
+            var groupExpression = queryableAfterFilters.EmptyGroupBy(QueryableUnderlyingType);
+            var selectExpression = groupExpression.Select(sb =>
+            {
+                Criteria.Aggregates.ForEach((a, index) =>
+                {
+                    var fa = InterceptAggregate<T>(a);
+                    var selectType = ResolveSelectFrom(fa.Type);
+                    sb.Aggregate(fa.Path, selectType, $"Agg_{index}");
+                });
+            });
+            return selectExpression;
         }
 
         protected virtual void CalculatePageCount(IQueryExecutionResult result)
@@ -248,6 +327,67 @@ namespace PoweredSoft.DynamicQuery
                 .Where(t => t is IBeforeQueryFilterInterceptor<T>)
                 .Cast<IBeforeQueryFilterInterceptor<T>>()
                 .Aggregate((IQueryable<T>)CurrentQueryable, (prev, interceptor) => interceptor.InterceptBeforeFiltering(Criteria, prev));
+        }
+
+        protected virtual List<object> RecursiveRegroup<T>(List<DynamicClass> groupRecords, List<List<DynamicClass>> aggregateResults, IGroup group, List<IGroupQueryResult> parentGroupResults = null)
+        {
+            var groupIndex = Criteria.Groups.IndexOf(group);
+            var isLast = Criteria.Groups.Last() == group;
+            var groups = Criteria.Groups.Take(groupIndex + 1).ToList();
+            var hasAggregates = Criteria.Aggregates.Any();
+
+            var ret = groupRecords
+                .GroupBy(gk => gk.GetDynamicPropertyValue($"Key_{groupIndex}"))
+                .Select(t =>
+                {
+                    var groupResult = new GroupQueryResult();
+
+                    // group results.
+
+                    List<IGroupQueryResult> groupResults;
+                    if (parentGroupResults == null)
+                        groupResults = new List<IGroupQueryResult> { groupResult };
+                    else
+                        groupResults = parentGroupResults.Union(new[] { groupResult }).ToList();
+
+                    groupResult.GroupPath = group.Path;
+                    groupResult.GroupValue = t.Key;
+
+                    if (hasAggregates)
+                    {
+                        var matchingAggregate = FindMatchingAggregateResult(aggregateResults, groups, groupResults);
+                        if (matchingAggregate == null)
+                            Debugger.Break();
+
+                        groupResult.Aggregates = new List<IAggregateResult>();
+                        Criteria.Aggregates.ForEach((a, ai) =>
+                        {
+                            var key = $"Agg_{ai}";
+                            var aggregateResult = new AggregateResult
+                            {
+                                Path = a.Path,
+                                Type = a.Type,
+                                Value = matchingAggregate.GetDynamicPropertyValue(key)
+                            };
+                            groupResult.Aggregates.Add(aggregateResult);
+                        });
+                    }
+
+                    if (isLast)
+                    {
+                        var entities = t.SelectMany(t2 => t2.GetDynamicPropertyValue<List<T>>("Records")).ToList();
+                        groupResult.Data = InterceptConvertTo<T>(entities);
+                    }
+                    else
+                    {
+                        groupResult.Data = RecursiveRegroup<T>(t.ToList(), aggregateResults, Criteria.Groups[groupIndex + 1], groupResults);
+                    }
+
+                    return groupResult;
+                })
+                .AsEnumerable<object>()
+                .ToList();
+            return ret;
         }
     }
 }
