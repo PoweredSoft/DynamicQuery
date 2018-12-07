@@ -66,6 +66,21 @@ public IQueryExecutionResult Read(
 }
 ```
 
+> New support for async
+
+```csharp
+[HttpPost]
+public async Task<IQueryExecutionResult> Read(
+    [FromServices]YourContext context, 
+    [FromServices]IQueryHandlerAsync handler,
+    [FromBody]IQueryCriteria criteria)
+{
+    IQueryable<OfSomething> query = context.Somethings;
+    var result = await handler.ExecuteAsync(query, criteria);
+    return result;
+}
+```
+
 ### Sample Web Project - ASP.NET CORE + EF Core
 
 Visit: https://github.com/PoweredSoft/DynamicQueryAspNetCoreSample
