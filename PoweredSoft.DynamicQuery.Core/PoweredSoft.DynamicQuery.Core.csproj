@@ -2,22 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Copyright>Powered Softwares Inc.</Copyright>
     <PackageLicenseUrl>MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/PoweredSoft/DynamicQuery</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery.Core/</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>powered,soft,dynamic,criteria,query,builder</PackageTags>
-    <Version>1.0.2</Version>
+    <Version>1.0.0$(VersionSuffix)</Version>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
     <Product>PoweredSoft.DynamicQuery.Core</Product>
     <Description>core abstractions</Description>
     <PackageId>PoweredSoft.DynamicQuery.Core</PackageId>
-    <PackageReleaseNotes>renamed interface.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <Company>PoweredSoft.DynamicQuery.Core</Company>
-    <Authors>PoweredSoft.DynamicQuery.Core</Authors>
+    <Company>Poweredsoft</Company>
+    <Authors>David Lebee</Authors>
   </PropertyGroup>
 
 </Project>

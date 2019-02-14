@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.Cli", "PoweredSoft.DynamicQuery.Cli\PoweredSoft.DynamicQuery.Cli.csproj", "{7FC0F790-A8B9-4335-8D72-09797DEB0359}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicLinq", "..\DynamicLinq\PoweredSoft.DynamicLinq\PoweredSoft.DynamicLinq.csproj", "{E4E954E0-66FA-4D72-979A-FB2EF8356A90}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BD742C81-D26A-466C-AB9B-840996D59FA6}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.md = LICENSE.md
@@ -20,12 +18,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.Test", "PoweredSoft.DynamicQuery.Test\PoweredSoft.DynamicQuery.Test.csproj", "{3EAD8217-8E10-4261-9055-50444905922C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.AspNetCore", "PoweredSoft.DynamicQuery.AspNetCore\PoweredSoft.DynamicQuery.AspNetCore.csproj", "{DF58BD18-AB47-4018-B1EA-D1118D93B408}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.Data.Core", "..\Data\PoweredSoft.Data.Core\PoweredSoft.Data.Core.csproj", "{E3CBE47B-08CF-4EAC-A1DF-312E78EAA141}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.Data.EntityFrameworkCore", "..\Data\PoweredSoft.Data.EntityFrameworkCore\PoweredSoft.Data.EntityFrameworkCore.csproj", "{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.Data", "..\Data\PoweredSoft.Data\PoweredSoft.Data.csproj", "{1A039A0F-1D09-4CAC-B86F-5F16DC026375}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +37,6 @@ Global
 		{7FC0F790-A8B9-4335-8D72-09797DEB0359}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FC0F790-A8B9-4335-8D72-09797DEB0359}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FC0F790-A8B9-4335-8D72-09797DEB0359}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4E954E0-66FA-4D72-979A-FB2EF8356A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4E954E0-66FA-4D72-979A-FB2EF8356A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4E954E0-66FA-4D72-979A-FB2EF8356A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4E954E0-66FA-4D72-979A-FB2EF8356A90}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3EAD8217-8E10-4261-9055-50444905922C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3EAD8217-8E10-4261-9055-50444905922C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EAD8217-8E10-4261-9055-50444905922C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,18 +45,6 @@ Global
 		{DF58BD18-AB47-4018-B1EA-D1118D93B408}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF58BD18-AB47-4018-B1EA-D1118D93B408}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF58BD18-AB47-4018-B1EA-D1118D93B408}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3CBE47B-08CF-4EAC-A1DF-312E78EAA141}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3CBE47B-08CF-4EAC-A1DF-312E78EAA141}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3CBE47B-08CF-4EAC-A1DF-312E78EAA141}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3CBE47B-08CF-4EAC-A1DF-312E78EAA141}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A039A0F-1D09-4CAC-B86F-5F16DC026375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A039A0F-1D09-4CAC-B86F-5F16DC026375}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A039A0F-1D09-4CAC-B86F-5F16DC026375}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A039A0F-1D09-4CAC-B86F-5F16DC026375}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
