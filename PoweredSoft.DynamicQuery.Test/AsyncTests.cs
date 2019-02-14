@@ -1,4 +1,5 @@
-﻿using PoweredSoft.Data.EntityFrameworkCore;
+﻿using PoweredSoft.Data;
+using PoweredSoft.Data.EntityFrameworkCore;
 using PoweredSoft.DynamicQuery.Core;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
@@ -21,7 +22,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var queryable = ctx.Items.AsQueryable();
 
                 // query handler that is empty should be the same as running to list.
-                var aqf = new AsyncQueryableFactory();
+                var aqf = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
                 var criteria = new QueryCriteria();
                 var queryHandler = new QueryHandlerAsync(aqf);
                 var result = await queryHandler.ExecuteAsync(queryable, criteria);
@@ -61,8 +62,8 @@ namespace PoweredSoft.DynamicQuery.Test
                         new Aggregate { Type = AggregateType.Avg, Path = "PriceAtTheTime"}
                     }
                 };
-
-                var queryHandler = new QueryHandlerAsync(new AsyncQueryableFactory());
+                var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
+                var queryHandler = new QueryHandlerAsync(asyncService);
                 var result = await queryHandler.ExecuteAsync(ctx.OrderItems, criteria);
                 var groups = result.Data.Cast<IGroupQueryResult>().ToList();
 
@@ -109,7 +110,8 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandlerAsync(new AsyncQueryableFactory());
+                var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
+                var queryHandler = new QueryHandlerAsync(asyncService);
                 var result = await queryHandler.ExecuteAsync(ctx.Items, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -128,7 +130,8 @@ namespace PoweredSoft.DynamicQuery.Test
                 criteria.Page = 2;
                 criteria.PageSize = 5;
 
-                var queryHandler = new QueryHandlerAsync(new AsyncQueryableFactory());
+                var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
+                var queryHandler = new QueryHandlerAsync(asyncService);
                 var result = await queryHandler.ExecuteAsync(ctx.OrderItems, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });

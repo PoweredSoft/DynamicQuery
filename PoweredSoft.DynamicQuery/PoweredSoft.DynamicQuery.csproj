@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Data\PoweredSoft.Data.Core\PoweredSoft.Data.Core.csproj" />
+    <ProjectReference Include="..\..\Data\PoweredSoft.Data\PoweredSoft.Data.csproj" />
     <ProjectReference Include="..\..\DynamicLinq\PoweredSoft.DynamicLinq\PoweredSoft.DynamicLinq.csproj" />
     <ProjectReference Include="..\PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj" />
   </ItemGroup>

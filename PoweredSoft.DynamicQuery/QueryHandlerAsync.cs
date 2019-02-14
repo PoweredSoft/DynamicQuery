@@ -11,13 +11,15 @@ namespace PoweredSoft.DynamicQuery
 {
     public class QueryHandlerAsync : QueryHandlerBase, IQueryHandlerAsync
     {
-        public IAsyncQueryableFactory AsyncQueryableFactory { get; }
         internal MethodInfo ExecuteAsyncGeneric = typeof(QueryHandlerAsync).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).First(t => t.Name == "ExecuteAsync" && t.IsGenericMethod);
+
+        public IAsyncQueryableService AsyncQueryableService { get; }
+
         internal Task<IQueryExecutionResult> ExecuteAsyncReflected(CancellationToken cancellationToken) => (Task<IQueryExecutionResult>)ExecuteAsyncGeneric.MakeGenericMethod(QueryableUnderlyingType).Invoke(this, new object[] { cancellationToken });
 
-        public QueryHandlerAsync(IAsyncQueryableFactory asyncQueryableFactory)
+        public QueryHandlerAsync(IAsyncQueryableService asyncQueryableService)
         {
-            AsyncQueryableFactory = asyncQueryableFactory;
+            AsyncQueryableService = asyncQueryableService;
         }
 
         protected virtual Task<IQueryExecutionResult> ExecuteAsync<T>(CancellationToken cancellationToken = default(CancellationToken))
@@ -40,7 +42,7 @@ namespace PoweredSoft.DynamicQuery
             var queryableAfterFilters = CurrentQueryable;
 
             // async.
-            result.TotalRecords = await this.AsyncQueryableFactory.LongCountAsync((IQueryable<T>)queryableAfterFilters, cancellationToken);
+            result.TotalRecords = await this.AsyncQueryableService.LongCountAsync((IQueryable<T>)queryableAfterFilters, cancellationToken);
             CalculatePageCount(result);
 
             // intercept groups in advance to avoid doing it more than once :)
@@ -65,7 +67,7 @@ namespace PoweredSoft.DynamicQuery
             });
 
             // loop through the grouped records.
-            var groupRecords = await AsyncQueryableFactory.ToListAsync(CurrentQueryable.Cast<DynamicClass>(), cancellationToken);
+            var groupRecords = await AsyncQueryableService.ToListAsync(CurrentQueryable.Cast<DynamicClass>(), cancellationToken);
 
             // now join them into logical collections
             result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First());
@@ -82,7 +84,7 @@ namespace PoweredSoft.DynamicQuery
             IQueryable<T> afterFilterQueryable = (IQueryable<T>)CurrentQueryable;
 
             // total records.
-            result.TotalRecords = await AsyncQueryableFactory.LongCountAsync(afterFilterQueryable, cancellationToken);
+            result.TotalRecords = await AsyncQueryableService.LongCountAsync(afterFilterQueryable, cancellationToken);
             CalculatePageCount(result);
 
             // sorts and paging.
@@ -90,7 +92,7 @@ namespace PoweredSoft.DynamicQuery
             ApplyPaging<T>();
 
             // data.
-            var entities = await AsyncQueryableFactory.ToListAsync(((IQueryable<T>)CurrentQueryable), cancellationToken);
+            var entities = await AsyncQueryableService.ToListAsync(((IQueryable<T>)CurrentQueryable), cancellationToken);
             var records = InterceptConvertTo<T>(entities);
             result.Data = records;
 
@@ -105,7 +107,7 @@ namespace PoweredSoft.DynamicQuery
                 return null;
 
             IQueryable selectExpression = CreateTotalAggregateSelectExpression<T>(queryableAfterFilters);
-            var aggregateResult = await AsyncQueryableFactory.FirstOrDefaultAsync(selectExpression.Cast<DynamicClass>());
+            var aggregateResult = await AsyncQueryableService.FirstOrDefaultAsync(selectExpression.Cast<DynamicClass>());
             return MaterializeCalculateTotalAggregateResult(aggregateResult);
         }
 
@@ -120,7 +122,7 @@ namespace PoweredSoft.DynamicQuery
             {
                 IQueryable selectExpression = CreateFetchAggregateSelectExpression<T>(fg, previousGroups);
                 var selectExpressionCasted = selectExpression.Cast<DynamicClass>();
-                var aggregateResult = AsyncQueryableFactory.ToListAsync(selectExpressionCasted, cancellationToken);
+                var aggregateResult = AsyncQueryableService.ToListAsync(selectExpressionCasted, cancellationToken);
                 previousGroups.Add(fg);
                 return aggregateResult;
             }));

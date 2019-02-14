@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.Data.Core", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.Data.EntityFrameworkCore", "..\Data\PoweredSoft.Data.EntityFrameworkCore\PoweredSoft.Data.EntityFrameworkCore.csproj", "{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.Data", "..\Data\PoweredSoft.Data\PoweredSoft.Data.csproj", "{1A039A0F-1D09-4CAC-B86F-5F16DC026375}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D3ED339-8AF2-44B7-9AC5-720A0AC6C2FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A039A0F-1D09-4CAC-B86F-5F16DC026375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A039A0F-1D09-4CAC-B86F-5F16DC026375}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A039A0F-1D09-4CAC-B86F-5F16DC026375}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A039A0F-1D09-4CAC-B86F-5F16DC026375}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
