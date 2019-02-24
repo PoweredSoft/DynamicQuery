@@ -1,4 +1,8 @@
-﻿namespace PoweredSoft.DynamicQuery.Core
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace PoweredSoft.DynamicQuery.Core
 {
     public interface IQueryConvertInterceptor : IQueryInterceptor
     {

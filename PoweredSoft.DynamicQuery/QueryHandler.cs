@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using PoweredSoft.DynamicLinq;
 using PoweredSoft.DynamicLinq.Fluent;
 using PoweredSoft.DynamicQuery.Core;
@@ -57,13 +58,15 @@ namespace PoweredSoft.DynamicQuery
             var groupRecords = CurrentQueryable.ToDynamicClassList();
 
             // now join them into logical collections
-            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First());
+            var lastLists = new List<List<object>>();
+            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First(), lastLists);
+
+            // intercept grouped by.
+            QueryInterceptToGrouped<T>(lastLists).Wait();
 
             result.Aggregates = CalculateTotalAggregate<T>(queryableAfterFilters);
             return result;
         }
-
-
         protected virtual List<IAggregateResult> CalculateTotalAggregate<T>(IQueryable queryableAfterFilters)
         {
             if (!Criteria.Aggregates.Any())
@@ -107,7 +110,7 @@ namespace PoweredSoft.DynamicQuery
 
             // data.
             var entities = ((IQueryable<T>)CurrentQueryable).ToList();
-            var records = InterceptConvertTo<T>(entities);
+            var records = InterceptConvertTo<T>(entities).Result;
             result.Data = records;
 
             // aggregates.

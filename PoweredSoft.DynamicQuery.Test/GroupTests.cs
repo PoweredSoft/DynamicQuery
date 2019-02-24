@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace PoweredSoft.DynamicQuery.Test
@@ -18,7 +20,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var shouldResult = ctx.Orders.OrderBy(t => t.Customer).GroupBy(t => t.Customer).Select(t => new
                 {
                     Customer = t.Key,
-                    Orders = t.ToList() 
+                    Orders = t.ToList()
                 }).ToList();
 
                 // query handler that is empty should be the same as running to list.
@@ -35,7 +37,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 // top level should have same amount of group levels.
                 Assert.Equal(result.Data.Count, shouldResult.Count);
-                for(var i = 0; i < shouldResult.Count; i++)
+                for (var i = 0; i < shouldResult.Count; i++)
                 {
                     var expected = shouldResult[0];
                     var actual = ((IGroupQueryResult)result.Data[0]);
@@ -78,6 +80,83 @@ namespace PoweredSoft.DynamicQuery.Test
                 var c = result.Data.Cast<IGroupQueryResult>().Select(t => t.GroupValue).Count();
                 Assert.Equal(expected, c);
             });
+        }
+
+        [Fact]
+        public void InterceptorsWithGrouping()
+        {
+            MockContextFactory.SeedAndTestContextFor("GroupTests_InterceptorsWithGrouping", TestSeeders.SeedTicketScenario, ctx =>
+            {
+                var criteria = new QueryCriteria()
+                {
+                    Groups = new List<IGroup>()
+                    {
+                        new Group { Path = "TicketType" }
+                    },
+                    Aggregates = new List<IAggregate>()
+                    {
+                        new Aggregate { Type = AggregateType.Count }
+                    }
+                };
+
+                var interceptor = new InterceptorsWithGrouping();
+                var queryHandler = new QueryHandler();
+                queryHandler.AddInterceptor(interceptor);
+                var result = queryHandler.Execute(ctx.Tickets, criteria);
+                Assert.Equal(4, interceptor.Count);
+                Assert.True(interceptor.Test);
+                Assert.True(interceptor.Test2);
+                Assert.True(interceptor.Test3);
+                Assert.True(interceptor.Test4);
+            });
+        }
+    }
+
+    class InterceptorWithGroupingFakeModel
+    {
+
+    }
+
+    class InterceptorsWithGrouping :
+        IAfterReadEntityInterceptor<Ticket>,
+        IAfterReadEntityInterceptorAsync<Ticket>,
+        IAfterReadInterceptor<Ticket>,
+        IAfterReadInterceptorAsync<Ticket>,
+        IQueryConvertInterceptor<Ticket>
+    {
+        public int Count { get; set; } = 0;
+        public bool Test { get; set; } = false;
+        public bool Test2 { get; set; } = false;
+        public bool Test3 { get; set; } = false;
+        public bool Test4 { get; set; } = false;
+
+        public void AfterRead(List<Tuple<Ticket, object>> pairs)
+        {
+            Test = true;
+            Count++;
+        }
+
+        public async Task AfterReadAsync(List<Tuple<Ticket, object>> pairs, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Test2 = true;
+            Count++;
+        }
+
+        public void AfterReadEntity(List<Ticket> entities)
+        {
+            Test3 = true;
+            Count++;
+        }
+
+        public async Task AfterReadEntityAsync(List<Ticket> entities, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Test4 = true;
+            Count++;
+        }
+
+        public object InterceptResultTo(Ticket entity)
+        {
+            return new InterceptorWithGroupingFakeModel();
         }
     }
 }

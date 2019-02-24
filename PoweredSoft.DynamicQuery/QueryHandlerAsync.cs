@@ -70,7 +70,11 @@ namespace PoweredSoft.DynamicQuery
             var groupRecords = await AsyncQueryableService.ToListAsync(CurrentQueryable.Cast<DynamicClass>(), cancellationToken);
 
             // now join them into logical collections
-            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First());
+            var lastLists = new List<List<object>>();
+            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First(), lastLists);
+
+            // converted to grouped by.
+            await QueryInterceptToGrouped<T>(lastLists);
 
             result.Aggregates = await CalculateTotalAggregateAsync<T>(queryableAfterFilters, cancellationToken);
             return result;
@@ -93,7 +97,7 @@ namespace PoweredSoft.DynamicQuery
 
             // data.
             var entities = await AsyncQueryableService.ToListAsync(((IQueryable<T>)CurrentQueryable), cancellationToken);
-            var records = InterceptConvertTo<T>(entities);
+            var records = await InterceptConvertTo<T>(entities);
             result.Data = records;
 
             // aggregates.

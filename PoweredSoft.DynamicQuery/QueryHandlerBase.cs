@@ -182,13 +182,44 @@ namespace PoweredSoft.DynamicQuery
             return ret;
         }
 
-        protected virtual List<object> InterceptConvertTo<T>(List<T> entities)
+        protected virtual async Task<List<object>> InterceptConvertTo<T>(List<T> entities)
         {
+            await AfterEntityReadInterceptors(entities);
+
             var objects = entities.Cast<object>().ToList();
             for (var i = 0; i < objects.Count; i++)
                 objects[i] = InterceptConvertToObject<T>(objects[i]);
 
+            var pairs = entities.Select((t, index) => Tuple.Create(t, objects[index])).ToList();
+            await AfterReadInterceptors<T>(pairs);
+
             return objects;
+        }
+
+        protected virtual async Task AfterEntityReadInterceptors<T>(List<T> entities)
+        {
+            Interceptors
+                .Where(t => t is IAfterReadEntityInterceptor<T>)
+                .Cast<IAfterReadEntityInterceptor<T>>()
+                .ToList()
+                .ForEach(t => t.AfterReadEntity(entities));
+
+            var asyncInterceptors = Interceptors.Where(t => t is IAfterReadEntityInterceptorAsync<T>).Cast<IAfterReadEntityInterceptorAsync<T>>();
+            foreach (var interceptor in asyncInterceptors)
+                await interceptor.AfterReadEntityAsync(entities);
+        }
+
+        protected virtual async Task AfterReadInterceptors<T>(List<Tuple<T, object>> pairs)
+        {
+            Interceptors
+                .Where(t => t is IAfterReadInterceptor<T>)
+                .Cast<IAfterReadInterceptor<T>>()
+                .ToList()
+                .ForEach(t => t.AfterRead(pairs));
+
+            var asyncInterceptors = Interceptors.Where(t => t is IAfterReadInterceptorAsync<T>).Cast<IAfterReadInterceptorAsync<T>>();
+            foreach (var interceptor in asyncInterceptors)
+                await interceptor.AfterReadAsync(pairs);
         }
 
         protected virtual object InterceptConvertToObject<T>(object o)
@@ -329,7 +360,7 @@ namespace PoweredSoft.DynamicQuery
                 .Aggregate((IQueryable<T>)CurrentQueryable, (prev, interceptor) => interceptor.InterceptBeforeFiltering(Criteria, prev));
         }
 
-        protected virtual List<object> RecursiveRegroup<T>(List<DynamicClass> groupRecords, List<List<DynamicClass>> aggregateResults, IGroup group, List<IGroupQueryResult> parentGroupResults = null)
+        protected virtual List<object> RecursiveRegroup<T>(List<DynamicClass> groupRecords, List<List<DynamicClass>> aggregateResults, IGroup group, List<List<object>> lastLists, List<IGroupQueryResult> parentGroupResults = null)
         {
             var groupIndex = Criteria.Groups.IndexOf(group);
             var isLast = Criteria.Groups.Last() == group;
@@ -376,11 +407,12 @@ namespace PoweredSoft.DynamicQuery
                     if (isLast)
                     {
                         var entities = t.SelectMany(t2 => t2.GetDynamicPropertyValue<List<T>>("Records")).ToList();
-                        groupResult.Data = InterceptConvertTo<T>(entities);
+                        groupResult.Data = entities.Cast<object>().ToList();
+                        lastLists.Add(groupResult.Data);
                     }
                     else
                     {
-                        groupResult.Data = RecursiveRegroup<T>(t.ToList(), aggregateResults, Criteria.Groups[groupIndex + 1], groupResults);
+                        groupResult.Data = RecursiveRegroup<T>(t.ToList(), aggregateResults, Criteria.Groups[groupIndex + 1], lastLists, groupResults);
                     }
 
                     return groupResult;
@@ -388,6 +420,27 @@ namespace PoweredSoft.DynamicQuery
                 .AsEnumerable<object>()
                 .ToList();
             return ret;
+        }
+
+        protected virtual async Task QueryInterceptToGrouped<T>(List<List<object>> lists)
+        {
+            var entities = lists.SelectMany(t => t).Cast<T>().ToList();
+            await AfterEntityReadInterceptors(entities);
+
+            var pairs = new List<Tuple<T, object>>();
+
+            lists.ForEach(innerList =>
+            {
+                for(var i = 0; i < innerList.Count; i++)
+                {
+                    var entity = (T)innerList[i];
+                    var convertedObject = InterceptConvertToObject<T>(entity);
+                    innerList[i] = convertedObject;
+                    pairs.Add(Tuple.Create(entity, convertedObject));
+                }
+            });
+
+            await AfterReadInterceptors<T>(pairs);
         }
     }
 }
