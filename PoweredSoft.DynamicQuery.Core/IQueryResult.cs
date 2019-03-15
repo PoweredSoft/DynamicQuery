@@ -11,19 +11,19 @@ namespace PoweredSoft.DynamicQuery.Core
         object Value { get; set; }
     }
 
-    public interface IQueryResult
+    public interface IQueryResult<TRes>
     {
         List<IAggregateResult> Aggregates { get; }
-        List<object> Data { get; }
+        List<TRes> Data { get; }
     }
 
-    public interface IGroupQueryResult : IQueryResult
+    public interface IGroupQueryResult<TRes> : IQueryResult<TRes>
     {
         string GroupPath { get; set; }
         object GroupValue { get; set; }
     }
 
-    public interface IQueryExecutionResult : IQueryResult
+    public interface IQueryExecutionResult<TRes> : IQueryResult<TRes>
     {
         long TotalRecords { get; set; }
         long? NumberOfPages { get; set; }
