@@ -26,6 +26,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var criteria = new QueryCriteria();
                 var queryHandler = new QueryHandlerAsync(aqf);
                 var result = await queryHandler.ExecuteAsync(queryable, criteria);
+                var data = result.Data;
                 Assert.Equal(resultShouldMatch, result.Data);
             });
         }

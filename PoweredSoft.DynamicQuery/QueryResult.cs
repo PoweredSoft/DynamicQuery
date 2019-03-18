@@ -22,7 +22,7 @@ namespace PoweredSoft.DynamicQuery
     public abstract class QueryResult : IQueryResult
     {
         public List<IAggregateResult> Aggregates { get; set; }
-        public List<object> Data { get; set; }
+        public IQueryable Data { get; set; }
 
         public bool ShouldSerializeAggregates() => Aggregates != null;
     }

@@ -54,10 +54,11 @@ namespace PoweredSoft.DynamicQuery
             });
 
             // loop through the grouped records.
-            var groupRecords = CurrentQueryable.ToDynamicClassList();
+//            var groupRecords = CurrentQueryable.ToDynamicClassList();
 
             // now join them into logical collections
-            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First());
+//            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First());
+            result.Data = CurrentQueryable;
 
             result.Aggregates = CalculateTotalAggregate<T>(queryableAfterFilters);
             return result;
@@ -106,9 +107,9 @@ namespace PoweredSoft.DynamicQuery
             ApplyPaging<T>();
 
             // data.
-            var entities = ((IQueryable<T>)CurrentQueryable).ToList();
-            var records = InterceptConvertTo<T>(entities);
-            result.Data = records;
+//            var entities = ((IQueryable<T>)CurrentQueryable).ToList();
+//            var records = InterceptConvertTo<T>(entities);
+            result.Data = afterFilterQueryable;
 
             // aggregates.
             result.Aggregates = CalculateTotalAggregate<T>(afterFilterQueryable);

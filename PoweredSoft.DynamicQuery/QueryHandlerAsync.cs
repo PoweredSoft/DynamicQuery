@@ -67,11 +67,11 @@ namespace PoweredSoft.DynamicQuery
             });
 
             // loop through the grouped records.
-            var groupRecords = await AsyncQueryableService.ToListAsync(CurrentQueryable.Cast<DynamicClass>(), cancellationToken);
+//            var groupRecords = await AsyncQueryableService.ToListAsync(CurrentQueryable.Cast<DynamicClass>(), cancellationToken);
 
             // now join them into logical collections
-            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First());
-
+//            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First());
+            result.Data = CurrentQueryable;
             result.Aggregates = await CalculateTotalAggregateAsync<T>(queryableAfterFilters, cancellationToken);
             return result;
         }
@@ -92,9 +92,9 @@ namespace PoweredSoft.DynamicQuery
             ApplyPaging<T>();
 
             // data.
-            var entities = await AsyncQueryableService.ToListAsync(((IQueryable<T>)CurrentQueryable), cancellationToken);
-            var records = InterceptConvertTo<T>(entities);
-            result.Data = records;
+//            var entities = await AsyncQueryableService.ToListAsync(((IQueryable<T>)CurrentQueryable), cancellationToken);
+//            var records = InterceptConvertTo<T>(entities);
+            result.Data = CurrentQueryable;
 
             // aggregates.
             result.Aggregates = await CalculateTotalAggregateAsync<T>(afterFilterQueryable, cancellationToken);

@@ -329,7 +329,7 @@ namespace PoweredSoft.DynamicQuery
                 .Aggregate((IQueryable<T>)CurrentQueryable, (prev, interceptor) => interceptor.InterceptBeforeFiltering(Criteria, prev));
         }
 
-        protected virtual List<object> RecursiveRegroup<T>(List<DynamicClass> groupRecords, List<List<DynamicClass>> aggregateResults, IGroup group, List<IGroupQueryResult> parentGroupResults = null)
+        /*protected virtual IQueryable RecursiveRegroup<T>(List<DynamicClass> groupRecords, List<List<DynamicClass>> aggregateResults, IGroup group, List<IGroupQueryResult> parentGroupResults = null)
         {
             var groupIndex = Criteria.Groups.IndexOf(group);
             var isLast = Criteria.Groups.Last() == group;
@@ -384,10 +384,8 @@ namespace PoweredSoft.DynamicQuery
                     }
 
                     return groupResult;
-                })
-                .AsEnumerable<object>()
-                .ToList();
+                });
             return ret;
-        }
+        }*/
     }
 }

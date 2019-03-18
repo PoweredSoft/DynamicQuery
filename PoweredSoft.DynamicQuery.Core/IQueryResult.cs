@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PoweredSoft.DynamicQuery.Core
@@ -11,19 +12,19 @@ namespace PoweredSoft.DynamicQuery.Core
         object Value { get; set; }
     }
 
-    public interface IQueryResult<TRes>
+    public interface IQueryResult
     {
         List<IAggregateResult> Aggregates { get; }
-        List<TRes> Data { get; }
+        IQueryable Data { get; }
     }
 
-    public interface IGroupQueryResult<TRes> : IQueryResult<TRes>
+    public interface IGroupQueryResult : IQueryResult
     {
         string GroupPath { get; set; }
         object GroupValue { get; set; }
     }
 
-    public interface IQueryExecutionResult<TRes> : IQueryResult<TRes>
+    public interface IQueryExecutionResult : IQueryResult
     {
         long TotalRecords { get; set; }
         long? NumberOfPages { get; set; }
