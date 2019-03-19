@@ -26,8 +26,8 @@ namespace PoweredSoft.DynamicQuery.Test
                 var criteria = new QueryCriteria();
                 var queryHandler = new QueryHandlerAsync(aqf);
                 var result = await queryHandler.ExecuteAsync(queryable, criteria);
-                var data = result.Data;
-                Assert.Equal(resultShouldMatch, result.Data);
+                var data = result.Data.Cast<Item>().ToList();
+                Assert.Equal(resultShouldMatch, data);
             });
         }
 
@@ -114,7 +114,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
                 var queryHandler = new QueryHandlerAsync(asyncService);
                 var result = await queryHandler.ExecuteAsync(ctx.Items, criteria);
-                Assert.Equal(resultShouldMatch, result.Data);
+                Assert.Equal(resultShouldMatch, result.Data.Cast<Item>().ToList());
             });
         }
 
@@ -134,7 +134,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
                 var queryHandler = new QueryHandlerAsync(asyncService);
                 var result = await queryHandler.ExecuteAsync(ctx.OrderItems, criteria);
-                Assert.Equal(resultShouldMatch, result.Data);
+                Assert.Equal(resultShouldMatch, result.Data.Cast<OrderItem>().ToList());
             });
         }
     }
