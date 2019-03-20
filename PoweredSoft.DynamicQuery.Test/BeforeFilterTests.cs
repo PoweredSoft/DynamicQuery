@@ -56,7 +56,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 // compare results.
                 var expected = queryable.ToList();
-                Assert.Equal(expected, result.Data);
+                Assert.Equal(expected, result.Data.Cast<Order>().ToList());
             });
         }
 
@@ -81,7 +81,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 // compare results.
                 var expected = queryable.ToList();
-                Assert.Equal(expected, result.Data);
+                Assert.Equal(expected, result.Data.Cast<Order>().ToList());
             });
         }
     }

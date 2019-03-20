@@ -21,7 +21,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var criteria = new QueryCriteria();
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(queryable, criteria);
-                Assert.Equal(resultShouldMatch, result.Data);
+                Assert.Equal(resultShouldMatch, result.Data.Cast<Item>().ToList());
             });
         }
 
@@ -40,7 +40,8 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.OrderItems, criteria);
-                Assert.Equal(resultShouldMatch, result.Data);
+                var data = result.Data.Cast<OrderItem>().ToList();
+                Assert.Equal(resultShouldMatch, data);
             });
         }
     }

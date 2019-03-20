@@ -33,7 +33,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.Customers, criteria);
-                Assert.Equal(resultShouldMatch, result.Data);
+                Assert.Equal(resultShouldMatch, result.Data.Cast<Customer>().ToList());
             });
         }
 
@@ -59,7 +59,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.Items, criteria);
-                Assert.Equal(resultShouldMatch, result.Data);
+                Assert.Equal(resultShouldMatch, result.Data.Cast<Item>().ToList());
             });
         }
 
@@ -90,7 +90,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.Customers, criteria);
-                Assert.Equal(resultShouldMatch, result.Data);
+                Assert.Equal(resultShouldMatch, result.Data.Cast<Customer>().ToList());
             });
         }
 
@@ -126,7 +126,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.Customers, criteria);
-                Assert.Equal(resultShouldMatch, result.Data);
+                Assert.Equal(resultShouldMatch, result.Data.Cast<Customer>().ToList());
             });
         }
     }

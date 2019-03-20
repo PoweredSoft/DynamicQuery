@@ -62,7 +62,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 query.AddInterceptor(new MockFilterInterceptorA());
                 var result = query.Execute(queryable, criteria);
 
-                var actual = result.Data;
+                var actual = result.Data.Cast<Order>().ToList();
                 var expected = queryable.Where(t => t.Customer.FirstName == "David").ToList();
                 Assert.Equal(expected, actual);
             });
@@ -87,7 +87,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 query.AddInterceptor(new MockFilterInterceptorAWithExtension());
                 var result = query.Execute(queryable, criteria);
 
-                var actual = result.Data;
+                var actual = result.Data.Cast<Order>().ToList();
                 var expected = queryable.Where(t => t.Customer.FirstName == "David").ToList();
                 Assert.Equal(expected, actual);
             });
@@ -112,7 +112,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 query.AddInterceptor(new MockFilterInterceptorAWithExtension());
                 var result = query.Execute(queryable, criteria);
 
-                var actual = result.Data;
+                var actual = result.Data.Cast<Order>().ToList();;
                 var expected = queryable.Where(t => t.Customer.FirstName.Contains("Da") || t.Customer.LastName.Contains("Da")).ToList();
                 Assert.Equal(expected, actual);
             });
@@ -138,7 +138,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 query.AddInterceptor(new MockFilterInterceptorB());
                 var result = query.Execute(queryable, criteria);
 
-                var actual = result.Data;
+                var actual = result.Data.Cast<Order>().ToList();;
                 var expected = queryable.Where(t => t.Customer.LastName == "Norris").ToList();
                 Assert.Equal(expected, actual);
             });

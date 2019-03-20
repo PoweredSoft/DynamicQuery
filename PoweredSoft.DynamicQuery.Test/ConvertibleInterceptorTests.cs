@@ -2,6 +2,7 @@
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -64,7 +65,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(new MockQueryConvertInterceptor());
                 var result = queryHandler.Execute(ctx.Customers, criteria);
-                Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
+                Assert.All(result.Data.Cast<Customer>().ToList(), t => Assert.IsType<CustomerModel>(t));
             });
         }
 
@@ -77,7 +78,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(new MockQueryConvertGenericInterceptor());
                 var result = queryHandler.Execute(ctx.Customers, criteria);
-                Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
+                Assert.All(result.Data.Cast<Customer>().ToList(), t => Assert.IsType<CustomerModel>(t));
             });
         }
     }

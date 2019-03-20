@@ -36,7 +36,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(new MockSortInterceptor());
                 var result = queryHandler.Execute(ctx.Orders, criteria);
-                Assert.Equal(expected, result.Data);
+                Assert.Equal(expected, result.Data.Cast<Order>().ToList());
             });
         }
     }

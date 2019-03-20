@@ -33,8 +33,9 @@ namespace PoweredSoft.DynamicQuery.Test
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.Orders, criteria);
 
+                var data = result.Data.Cast<Order>().ToList();
                 // top level should have same amount of group levels.
-                Assert.Equal(result.Data.Count, shouldResult.Count);
+                Assert.Equal(data.Count, shouldResult.Count);
                 for(var i = 0; i < shouldResult.Count; i++)
                 {
                     var expected = shouldResult[0];
