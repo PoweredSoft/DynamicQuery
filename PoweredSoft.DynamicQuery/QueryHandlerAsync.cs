@@ -9,6 +9,7 @@ using PoweredSoft.DynamicQuery.Core;
 
 namespace PoweredSoft.DynamicQuery
 {
+    /*
     public class QueryHandlerAsync : QueryHandlerBase, IQueryHandlerAsync
     {
         internal MethodInfo ExecuteAsyncGeneric = typeof(QueryHandlerAsync).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).First(t => t.Name == "ExecuteAsync" && t.IsGenericMethod);
@@ -134,5 +135,5 @@ namespace PoweredSoft.DynamicQuery
             var finalResult = whenAllResult.ToList();
             return finalResult;
         }
-    }
+    }*/
 }

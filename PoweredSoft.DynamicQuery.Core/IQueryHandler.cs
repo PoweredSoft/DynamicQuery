@@ -13,11 +13,14 @@ namespace PoweredSoft.DynamicQuery.Core
 
     public interface IQueryHandler : IInterceptableQueryHandler
     {
-        IQueryExecutionResult Execute(IQueryable queryable, IQueryCriteria criteria);
+        IQueryExecutionResult<TSource> Execute<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria);
+        IQueryExecutionResult<TRecord> Execute<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria);
     }
 
     public interface IQueryHandlerAsync : IInterceptableQueryHandler
     {
-        Task<IQueryExecutionResult> ExecuteAsync(IQueryable queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IQueryExecutionResult<object>> ExecuteAsync(IQueryable queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IQueryExecutionResult<TSource>> ExecuteAsync<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IQueryExecutionResult<TRecord>> ExecuteAsync<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

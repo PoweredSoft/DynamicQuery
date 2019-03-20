@@ -1,4 +1,5 @@
 ﻿using PoweredSoft.DynamicQuery.Core;
+using PoweredSoft.DynamicQuery.Extensions;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
 using System.Collections.Generic;
@@ -34,13 +35,14 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.Orders, criteria);
+                var groupedResult = result.GroupedResult();
 
                 // top level should have same amount of group levels.
-                Assert.Equal(result.Data.Count, shouldResult.Count);
+                Assert.Equal(groupedResult.Groups.Count, shouldResult.Count);
                 for (var i = 0; i < shouldResult.Count; i++)
                 {
                     var expected = shouldResult[0];
-                    var actual = ((IGroupQueryResult)result.Data[0]);
+                    var actual = groupedResult.Groups[0];
                     Assert.Equal(expected.Customer.Id, (actual.GroupValue as Customer).Id);
 
                     var expectedOrderIds = expected.Orders.Select(t => t.Id).ToList();
@@ -71,13 +73,15 @@ namespace PoweredSoft.DynamicQuery.Test
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.Tickets, criteria);
 
-                var firstGroup = result.Data[0] as IGroupQueryResult;
+                var groupedResult = result.GroupedResult();
+
+                var firstGroup = groupedResult.Groups.FirstOrDefault();
                 Assert.NotNull(firstGroup);
-                var secondGroup = result.Data[1] as IGroupQueryResult;
+                var secondGroup = groupedResult.Groups.Skip(1).FirstOrDefault();
                 Assert.NotNull(secondGroup);
 
                 var expected = ctx.Tickets.Select(t => t.TicketType).Distinct().Count();
-                var c = result.Data.Cast<IGroupQueryResult>().Select(t => t.GroupValue).Count();
+                var c = groupedResult.Groups.Select(t => t.GroupValue).Count();
                 Assert.Equal(expected, c);
             });
         }
@@ -102,7 +106,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var interceptor = new InterceptorsWithGrouping();
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(interceptor);
-                var result = queryHandler.Execute(ctx.Tickets, criteria);
+                var result = queryHandler.Execute<Ticket, InterceptorWithGroupingFakeModel>(ctx.Tickets, criteria);
                 Assert.Equal(4, interceptor.Count);
                 Assert.True(interceptor.Test);
                 Assert.True(interceptor.Test2);

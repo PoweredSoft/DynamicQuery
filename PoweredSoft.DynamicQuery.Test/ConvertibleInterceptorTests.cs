@@ -63,7 +63,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var criteria = new QueryCriteria();
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(new MockQueryConvertInterceptor());
-                var result = queryHandler.Execute(ctx.Customers, criteria);
+                var result = queryHandler.Execute<Customer, CustomerModel>(ctx.Customers, criteria);
                 Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
             });
         }
@@ -76,7 +76,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var criteria = new QueryCriteria();
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(new MockQueryConvertGenericInterceptor());
-                var result = queryHandler.Execute(ctx.Customers, criteria);
+                var result = queryHandler.Execute<Customer, CustomerModel>(ctx.Customers, criteria);
                 Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
             });
         }
