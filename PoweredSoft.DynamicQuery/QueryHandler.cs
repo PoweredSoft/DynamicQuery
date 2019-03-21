@@ -60,7 +60,7 @@ namespace PoweredSoft.DynamicQuery
 //            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First());
             result.Data = CurrentQueryable;
 
-            result.Aggregates = CalculateTotalAggregate<T>(queryableAfterFilters);
+            result.Aggregates = CalculateTotalAggregate<T>(CurrentQueryable);
             return result;
         }
 
@@ -109,10 +109,10 @@ namespace PoweredSoft.DynamicQuery
             // data.
 //            var entities = ((IQueryable<T>)CurrentQueryable).ToList();
 //            var records = InterceptConvertTo<T>(entities);
-            result.Data = afterFilterQueryable;
+            result.Data = CurrentQueryable;
 
             // aggregates.
-            result.Aggregates = CalculateTotalAggregate<T>(afterFilterQueryable);
+            result.Aggregates = CalculateTotalAggregate<T>(CurrentQueryable);
 
             return result;
         }
