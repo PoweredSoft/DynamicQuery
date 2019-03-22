@@ -4,15 +4,19 @@ It's a library that allows you to easily query a queryable using a criteria obje
 
 It also offers, to intercept the query using **IQueryInterceptor** implementations.
 
+## LEGACY
+
+V1 is a legacy version, you may want to update to V2.
+
 ## Getting Started
 
 > Install nuget package to your awesome project.
 
 Full Version                  | NuGet                                                                                                                                                                                                                                                                 |                                           NuGet Install
 ------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------:
-PoweredSoft.DynamicQuery      | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery/" target="_blank">[![NuGet](https://img.shields.io/nuget/v/PoweredSoft.DynamicQuery.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery/)</a>                |      ```PM> Install-Package PoweredSoft.DynamicQuery```
-PoweredSoft.DynamicQuery.Core | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery.Core/" target="_blank">[![NuGet](https://img.shields.io/nuget/v/PoweredSoft.DynamicQuery.Core.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery.Core/)</a> | ```PM> Install-Package PoweredSoft.DynamicQuery.Core```
-PoweredSoft.DynamicQuery.AspNetCore | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery.AspNetCore/" target="_blank">[![NuGet](https://img.shields.io/nuget/v/PoweredSoft.DynamicQuery.AspNetCore.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery.AspNetCore/)</a> | ```PM> Install-Package PoweredSoft.DynamicQuery.AspNetCore```
+PoweredSoft.DynamicQuery      | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery/1.0.126" target="_blank">[![NuGet](https://img.shields.io/badge/nuget-v1.0.126-blue.svg)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery/1.0.126)</a>                |      ```PM> Install-Package PoweredSoft.DynamicQuery```
+PoweredSoft.DynamicQuery.Core | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery.Core/1.0.126" target="_blank">[![NuGet](https://img.shields.io/badge/nuget-v1.0.126-blue.svg)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery.Core/1.0.126)</a> | ```PM> Install-Package PoweredSoft.DynamicQuery.Core```
+PoweredSoft.DynamicQuery.AspNetCore | <a href="https://www.nuget.org/packages/PoweredSoft.DynamicQuery.AspNetCore/1.0.126" target="_blank">[![NuGet](https://img.shields.io/badge/nuget-v1.0.126-blue.svg)](https://www.nuget.org/packages/PoweredSoft.DynamicQuery.AspNetCore/1.0.126)</a> | ```PM> Install-Package PoweredSoft.DynamicQuery.AspNetCore```
 
 ## Using in ASP.NET Core
 
