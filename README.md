@@ -45,7 +45,7 @@ public class Startup
 ```csharp
 
 [HttpGet]
-public IQueryExecutionResult Get(
+public IQueryExecutionResult<OfSomething> Get(
             [FromServices]YourContext context, 
             [FromServices]IQueryHandler handler, 
             [FromServices]IQueryCriteria criteria,
@@ -60,7 +60,7 @@ public IQueryExecutionResult Get(
 }
 
 [HttpPost]
-public IQueryExecutionResult Read(
+public IQueryExecutionResult<OfSomething> Read(
     [FromServices]YourContext context, 
     [FromServices]IQueryHandler handler,
     [FromBody]IQueryCriteria criteria)
@@ -75,7 +75,7 @@ public IQueryExecutionResult Read(
 
 ```csharp
 [HttpPost]
-public async Task<IQueryExecutionResult> Read(
+public async Task<IQueryExecutionResult<OfSomething>> Read(
     [FromServices]YourContext context, 
     [FromServices]IQueryHandlerAsync handler,
     [FromBody]IQueryCriteria criteria)
@@ -138,12 +138,14 @@ var criteria = new QueryCriteria
 };
 
 var queryHandler = new QueryHandler();
-IQueryExecutionResult result = queryHandler.Execute(someQueryable, criteria);
+IQueryExecutionResult<OfSomeQueryableType> result = queryHandler.Execute(someQueryable, criteria);
 ```
 
 ## Query Result
 
 Here is the interfaces that represent the result of query handling execution.
+
+> Changed in 2.x
 
 ```csharp
 public interface IAggregateResult
@@ -153,22 +155,34 @@ public interface IAggregateResult
     object Value { get; set; }
 }
 
-public interface IQueryResult
+public interface IQueryResult<TRecord>
 {
     List<IAggregateResult> Aggregates { get; }
-    List<object> Data { get; }
+    List<TRecord> Data { get; }
 }
 
-public interface IGroupQueryResult : IQueryResult
+public interface IGroupQueryResult<TRecord> : IQueryResult<TRecord>
 {
     string GroupPath { get; set; }
     object GroupValue { get; set; }
+    bool HasSubGroups { get; }
+    List<IGroupQueryResult<TRecord>> SubGroups { get; set; }
 }
 
-public interface IQueryExecutionResult : IQueryResult
+public interface IQueryExecutionResultPaging
 {
     long TotalRecords { get; set; }
     long? NumberOfPages { get; set; }
+}
+
+public interface IQueryExecutionResult<TRecord> : IQueryResult<TRecord>, IQueryExecutionResultPaging
+{
+
+}
+
+public interface IQueryExecutionGroupResult<TRecord> : IQueryExecutionResult<TRecord>
+{
+    List<IGroupQueryResult<TRecord>> Groups { get; set; }
 }
 ```
 

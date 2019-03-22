@@ -21,7 +21,7 @@ namespace PoweredSoft.DynamicQuery.Core
     {
         string GroupPath { get; set; }
         object GroupValue { get; set; }
-        bool HasSubGroups { get; set; }
+        bool HasSubGroups { get; }
         List<IGroupQueryResult<TRecord>> SubGroups { get; set; }
     }
 
