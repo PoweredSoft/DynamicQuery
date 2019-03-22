@@ -19,7 +19,6 @@ namespace PoweredSoft.DynamicQuery.Core
 
     public interface IQueryHandlerAsync : IInterceptableQueryHandler
     {
-        Task<IQueryExecutionResult<object>> ExecuteAsync(IQueryable queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken));
         Task<IQueryExecutionResult<TSource>> ExecuteAsync<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken));
         Task<IQueryExecutionResult<TRecord>> ExecuteAsync<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken));
     }

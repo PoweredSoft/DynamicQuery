@@ -34,7 +34,7 @@ namespace PoweredSoft.DynamicQuery
         public long? NumberOfPages { get; set; }
     }
 
-    public class QueryGroupExecutionResult<TRecord> : QueryExecutionResult<TRecord>, IQueryExecutionGroupResult<TRecord>
+    public class QueryExecutionGroupResult<TRecord> : QueryExecutionResult<TRecord>, IQueryExecutionGroupResult<TRecord>
     {
         public List<IGroupQueryResult<TRecord>> Groups { get; set; }
     }

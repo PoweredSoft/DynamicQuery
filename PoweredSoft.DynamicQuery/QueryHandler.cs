@@ -22,7 +22,7 @@ namespace PoweredSoft.DynamicQuery
 
         protected virtual IQueryExecutionResult<TRecord> ExecuteGrouping<TSource, TRecord>()
         {
-            var result = new QueryGroupExecutionResult<TRecord>();
+            var result = new QueryExecutionGroupResult<TRecord>();
 
             // preserve queryable.
             var queryableAfterFilters = CurrentQueryable;
