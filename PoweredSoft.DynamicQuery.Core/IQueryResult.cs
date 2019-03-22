@@ -11,23 +11,35 @@ namespace PoweredSoft.DynamicQuery.Core
         object Value { get; set; }
     }
 
-    public interface IQueryResult
+    public interface IQueryResult<TRecord>
     {
         List<IAggregateResult> Aggregates { get; }
-        List<object> Data { get; }
+        List<TRecord> Data { get; }
     }
 
-    public interface IGroupQueryResult : IQueryResult
+    public interface IGroupQueryResult<TRecord> : IQueryResult<TRecord>
     {
         string GroupPath { get; set; }
         object GroupValue { get; set; }
+        bool HasSubGroups { get; }
+        List<IGroupQueryResult<TRecord>> SubGroups { get; set; }
     }
 
-    public interface IQueryExecutionResult : IQueryResult
+    public interface IQueryExecutionResultPaging
     {
         long TotalRecords { get; set; }
         long? NumberOfPages { get; set; }
     }
 
-   
+    public interface IQueryExecutionResult<TRecord> : IQueryResult<TRecord>, IQueryExecutionResultPaging
+    {
+
+    }
+
+    public interface IQueryExecutionGroupResult<TRecord> : IQueryExecutionResult<TRecord>
+    {
+        List<IGroupQueryResult<TRecord>> Groups { get; set; }
+    }
+
+
 }

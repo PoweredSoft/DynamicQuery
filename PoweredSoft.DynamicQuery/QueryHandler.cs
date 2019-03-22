@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using PoweredSoft.DynamicLinq;
 using PoweredSoft.DynamicLinq.Fluent;
@@ -13,19 +14,15 @@ namespace PoweredSoft.DynamicQuery
 {
     public class QueryHandler : QueryHandlerBase, IQueryHandler
     {
-        internal MethodInfo ExecuteGeneric = typeof(QueryHandler).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).First(t => t.Name == "Execute" && t.IsGenericMethod);
-        internal IQueryExecutionResult ExecuteReflected() => (IQueryExecutionResult)ExecuteGeneric.MakeGenericMethod(QueryableUnderlyingType).Invoke(this, new object[] { });
-
-        protected virtual IQueryExecutionResult Execute<T>()
+        protected virtual IQueryExecutionResult<TRecord> FinalExecute<TSource, TRecord>()
         {
-            CommonBeforeExecute<T>();
-            return HasGrouping ? ExecuteGrouping<T>() : ExecuteNoGrouping<T>();
+            CommonBeforeExecute<TSource>();
+            return HasGrouping ? ExecuteGrouping<TSource, TRecord>() : ExecuteNoGrouping<TSource, TRecord>();
         }
 
-
-        protected virtual IQueryExecutionResult ExecuteGrouping<T>()
+        protected virtual IQueryExecutionResult<TRecord> ExecuteGrouping<TSource, TRecord>()
         {
-            var result = new QueryExecutionResult();
+            var result = new QueryExecutionGroupResult<TRecord>();
 
             // preserve queryable.
             var queryableAfterFilters = CurrentQueryable;
@@ -34,17 +31,17 @@ namespace PoweredSoft.DynamicQuery
             CalculatePageCount(result);
 
             // intercept groups in advance to avoid doing it more than once :)
-            var finalGroups = Criteria.Groups.Select(g => InterceptGroup<T>(g)).ToList();
+            var finalGroups = Criteria.Groups.Select(g => InterceptGroup<TSource>(g)).ToList();
 
             // get the aggregates.
-            var aggregateResults = FetchAggregates<T>(finalGroups);
+            var aggregateResults = FetchAggregates<TSource>(finalGroups);
 
             // sorting.
             finalGroups.ForEach(fg => Criteria.Sorts.Insert(0, new Sort(fg.Path, fg.Ascending)));
 
             // apply sorting and paging.
-            ApplySorting<T>();
-            ApplyPaging<T>();
+            ApplySorting<TSource>();
+            ApplyPaging<TSource>();
 
             // create group & select expression.
             CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb => finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}")));
@@ -58,26 +55,26 @@ namespace PoweredSoft.DynamicQuery
             var groupRecords = CurrentQueryable.ToDynamicClassList();
 
             // now join them into logical collections
-            var lastLists = new List<List<object>>();
-            result.Data = RecursiveRegroup<T>(groupRecords, aggregateResults, Criteria.Groups.First(), lastLists);
+            var lastLists = new List<(List<TSource> source, IGroupQueryResult<TRecord> group)>();
+            result.Groups = RecursiveRegroup<TSource, TRecord>(groupRecords, aggregateResults, Criteria.Groups.First(), lastLists);
 
             // intercept grouped by.
-            QueryInterceptToGrouped<T>(lastLists).Wait();
+            QueryInterceptToGrouped<TSource, TRecord>(lastLists).Wait();
 
-            result.Aggregates = CalculateTotalAggregate<T>(queryableAfterFilters);
+            result.Aggregates = CalculateTotalAggregate<TSource>(queryableAfterFilters);
             return result;
         }
-        protected virtual List<IAggregateResult> CalculateTotalAggregate<T>(IQueryable queryableAfterFilters)
+        protected virtual List<IAggregateResult> CalculateTotalAggregate<TSource>(IQueryable queryableAfterFilters)
         {
             if (!Criteria.Aggregates.Any())
                 return null;
 
-            IQueryable selectExpression = CreateTotalAggregateSelectExpression<T>(queryableAfterFilters);
+            IQueryable selectExpression = CreateTotalAggregateSelectExpression<TSource>(queryableAfterFilters);
             var aggregateResult = selectExpression.ToDynamicClassList().FirstOrDefault();
             return MaterializeCalculateTotalAggregateResult(aggregateResult);
         }
         
-        protected virtual List<List<DynamicClass>> FetchAggregates<T>(List<IGroup> finalGroups)
+        protected virtual List<List<DynamicClass>> FetchAggregates<TSource>(List<IGroup> finalGroups)
         {
             if (!Criteria.Aggregates.Any())
                 return null;
@@ -85,7 +82,7 @@ namespace PoweredSoft.DynamicQuery
             var previousGroups = new List<IGroup>();
             var ret = finalGroups.Select(fg =>
             {
-                IQueryable selectExpression = CreateFetchAggregateSelectExpression<T>(fg, previousGroups);
+                IQueryable selectExpression = CreateFetchAggregateSelectExpression<TSource>(fg, previousGroups);
                 var aggregateResult = selectExpression.ToDynamicClassList();
                 previousGroups.Add(fg);
                 return aggregateResult;
@@ -93,9 +90,9 @@ namespace PoweredSoft.DynamicQuery
             return ret;
         }
 
-        protected virtual IQueryExecutionResult ExecuteNoGrouping<T>()
+        protected virtual IQueryExecutionResult<TRecord> ExecuteNoGrouping<TSource, TRecord>()
         {
-            var result = new QueryExecutionResult();
+            var result = new QueryExecutionResult<TRecord>();
 
             // after filter queryable
             var afterFilterQueryable = CurrentQueryable;
@@ -105,25 +102,30 @@ namespace PoweredSoft.DynamicQuery
             CalculatePageCount(result);
 
             // sorts and paging.
-            ApplySorting<T>();
-            ApplyPaging<T>();
+            ApplySorting<TSource>();
+            ApplyPaging<TSource>();
 
             // data.
-            var entities = ((IQueryable<T>)CurrentQueryable).ToList();
-            var records = InterceptConvertTo<T>(entities).Result;
+            var entities = ((IQueryable<TSource>)CurrentQueryable).ToList();
+            var records = InterceptConvertTo<TSource, TRecord>(entities).Result;
             result.Data = records;
 
             // aggregates.
-            result.Aggregates = CalculateTotalAggregate<T>(afterFilterQueryable);
+            result.Aggregates = CalculateTotalAggregate<TSource>(afterFilterQueryable);
 
             return result;
         }
-   
 
-        public virtual IQueryExecutionResult Execute(IQueryable queryable, IQueryCriteria criteria)
+        public IQueryExecutionResult<TSource> Execute<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria)
         {
             Reset(queryable, criteria);
-            return ExecuteReflected();
+            return FinalExecute<TSource, TSource>();
+        }
+
+        public IQueryExecutionResult<TRecord> Execute<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria)
+        {
+            Reset(queryable, criteria);
+            return FinalExecute<TSource, TRecord>();
         }
     }
 }

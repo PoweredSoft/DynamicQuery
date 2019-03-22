@@ -1,6 +1,7 @@
 ﻿using PoweredSoft.Data;
 using PoweredSoft.Data.EntityFrameworkCore;
 using PoweredSoft.DynamicQuery.Core;
+using PoweredSoft.DynamicQuery.Extensions;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
                 var queryHandler = new QueryHandlerAsync(asyncService);
                 var result = await queryHandler.ExecuteAsync(ctx.OrderItems, criteria);
-                var groups = result.Data.Cast<IGroupQueryResult>().ToList();
+                var groups = result.GroupedResult().Groups;
 
                 // validate group and aggregates of groups.
                 Assert.Equal(groups.Count, shouldResults.Count);

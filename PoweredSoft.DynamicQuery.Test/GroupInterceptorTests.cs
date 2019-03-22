@@ -1,4 +1,5 @@
 ﻿using PoweredSoft.DynamicQuery.Core;
+using PoweredSoft.DynamicQuery.Extensions;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,9 @@ namespace PoweredSoft.DynamicQuery.Test
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(new MockGroupInterceptor());
                 var result = queryHandler.Execute(ctx.Orders, criteria);
-                var actual = result.Data.Cast<IGroupQueryResult>().Select(t => t.GroupValue).ToList();
+
+                var groupedResult = result.GroupedResult();
+                var actual = groupedResult.Groups.Select(t => t.GroupValue).ToList();
                 Assert.Equal(expected, actual);
             });
         }

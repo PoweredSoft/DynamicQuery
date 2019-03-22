@@ -114,7 +114,11 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var queryHandler = new QueryHandler();
                 var result = queryHandler.Execute(ctx.OrderItems, criteria);
-                var groups = result.Data.Cast<IGroupQueryResult>().ToList();
+
+                var groupedResult = result as IQueryExecutionGroupResult<OrderItem>;
+                Assert.NotNull(groupedResult);
+
+                var groups = groupedResult.Groups;
 
                 // validate group and aggregates of groups.
                 Assert.Equal(groups.Count, shouldResults.Count);

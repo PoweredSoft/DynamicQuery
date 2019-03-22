@@ -8,7 +8,7 @@
     <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>powered,soft,dynamic,criteria,query,builder</PackageTags>
-    <Version>1.0.0$(VersionSuffix)</Version>
+    <Version>2.0.0$(VersionSuffix)</Version>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
     <Product>PoweredSoft.DynamicQuery</Product>
     <Description>dynamic query based on string path very usefull for network requests.</Description>
