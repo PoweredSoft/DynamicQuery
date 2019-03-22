@@ -4,6 +4,11 @@ It's a library that allows you to easily query a queryable using a criteria obje
 
 It also offers, to intercept the query using **IQueryInterceptor** implementations.
 
+## Breaking Changes
+
+If you are moving up from v1, the breaking changes details are lower.
+
+
 ## Getting Started
 
 > Install nuget package to your awesome project.
@@ -40,7 +45,7 @@ public class Startup
 ```csharp
 
 [HttpGet]
-public IQueryExecutionResult Get(
+public IQueryExecutionResult<OfSomething> Get(
             [FromServices]YourContext context, 
             [FromServices]IQueryHandler handler, 
             [FromServices]IQueryCriteria criteria,
@@ -55,7 +60,7 @@ public IQueryExecutionResult Get(
 }
 
 [HttpPost]
-public IQueryExecutionResult Read(
+public IQueryExecutionResult<OfSomething> Read(
     [FromServices]YourContext context, 
     [FromServices]IQueryHandler handler,
     [FromBody]IQueryCriteria criteria)
@@ -70,7 +75,7 @@ public IQueryExecutionResult Read(
 
 ```csharp
 [HttpPost]
-public async Task<IQueryExecutionResult> Read(
+public async Task<IQueryExecutionResult<OfSomething>> Read(
     [FromServices]YourContext context, 
     [FromServices]IQueryHandlerAsync handler,
     [FromBody]IQueryCriteria criteria)
@@ -84,6 +89,25 @@ public async Task<IQueryExecutionResult> Read(
 ### Sample Web Project - ASP.NET CORE + EF Core
 
 Visit: https://github.com/PoweredSoft/DynamicQueryAspNetCoreSample
+
+### Breaking Changes if you are migrating from 1.x
+
+Response interface, is now generic ```IQueryResult<T>``` which impacts the way to execute the handler.
+
+#### Grouping results
+
+Since the results are now generic, it's no longer a List<object> in the response so that changes the result if grouping is requested.
+
+You have now a property Groups, and HasSubGroups, and SubGroups.
+
+#### QueryConvertTo Interceptor
+
+If you are using IQueryConvertTo interceptors, it's new that you must specify the type you are converting to
+Ex:
+```csharp
+IQueryable<OfSomething> query = context.Somethings;
+var result = handler.Execute<OfSomething, OfSomethingElse>(query, criteria);
+```
 
 ## Criteria
 
@@ -114,12 +138,14 @@ var criteria = new QueryCriteria
 };
 
 var queryHandler = new QueryHandler();
-IQueryExecutionResult result = queryHandler.Execute(someQueryable, criteria);
+IQueryExecutionResult<OfSomeQueryableType> result = queryHandler.Execute(someQueryable, criteria);
 ```
 
 ## Query Result
 
 Here is the interfaces that represent the result of query handling execution.
+
+> Changed in 2.x
 
 ```csharp
 public interface IAggregateResult
@@ -129,22 +155,34 @@ public interface IAggregateResult
     object Value { get; set; }
 }
 
-public interface IQueryResult
+public interface IQueryResult<TRecord>
 {
     List<IAggregateResult> Aggregates { get; }
-    List<object> Data { get; }
+    List<TRecord> Data { get; }
 }
 
-public interface IGroupQueryResult : IQueryResult
+public interface IGroupQueryResult<TRecord> : IQueryResult<TRecord>
 {
     string GroupPath { get; set; }
     object GroupValue { get; set; }
+    bool HasSubGroups { get; }
+    List<IGroupQueryResult<TRecord>> SubGroups { get; set; }
 }
 
-public interface IQueryExecutionResult : IQueryResult
+public interface IQueryExecutionResultPaging
 {
     long TotalRecords { get; set; }
     long? NumberOfPages { get; set; }
+}
+
+public interface IQueryExecutionResult<TRecord> : IQueryResult<TRecord>, IQueryExecutionResultPaging
+{
+
+}
+
+public interface IQueryExecutionGroupResult<TRecord> : IQueryExecutionResult<TRecord>
+{
+    List<IGroupQueryResult<TRecord>> Groups { get; set; }
 }
 ```
 
@@ -180,4 +218,5 @@ IAggregateInterceptor | [interface](../master/PoweredSoft.DynamicQuery.Core/IAgg
 Interceptor                       | Interface                                                                             | Example                                                     | Description
 ----------------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------
 IQueryConvertInterceptor          | [interface](../master/PoweredSoft.DynamicQuery.Core/IQueryConvertInterceptor.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/ConvertibleInterceptorTests.cs) | This interceptor allows you to replace the object that is being returned by the query, by another object instance
-IQueryConvertInterceptor&lt;T&gt; | [interface](../master/PoweredSoft.DynamicQuery.Core/IQueryConvertInterceptor.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/ConvertibleInterceptorTests.cs#L72) | This interceptor allows you to replace the object that is being returned by the query, by another object instance
+IQueryConvertInterceptor&lt;T, T2&gt; | [interface](../master/PoweredSoft.DynamicQuery.Core/IQueryConvertInterceptor.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/ConvertibleInterceptorTests.cs#L72) | This interceptor allows you to replace the object that is being returned by the query, by another object instance **(restricts the source)**
+IQueryConvertInterceptor&lt;T, T2&gt; | [interface](../master/PoweredSoft.DynamicQuery.Core/IQueryConvertInterceptor.cs) | [test](../master/PoweredSoft.DynamicQuery.Test/ConvertibleInterceptorTests.cs#L101) | This interceptor allows you to replace the object that is being returned by the query, by another object instance **(restricts the source & output)**
