@@ -18,7 +18,7 @@ namespace PoweredSoft.DynamicQuery
             services.TryAddTransient<IGroup, Group>();
             services.TryAddTransient<IQueryCriteria, QueryCriteria>();
             services.TryAddTransient<IQueryHandler, QueryHandler>();
-            //services.TryAddTransient<IQueryHandlerAsync, QueryHandlerAsync>();
+            services.TryAddTransient<IQueryHandlerAsync, QueryHandlerAsync>();
             return services;
         }
     }

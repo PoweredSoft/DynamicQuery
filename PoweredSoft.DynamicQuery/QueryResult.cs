@@ -25,6 +25,8 @@ namespace PoweredSoft.DynamicQuery
         public List<TRecord> Data { get; set; }
 
         public bool ShouldSerializeAggregates() => Aggregates != null;
+
+        public bool ShouldSerializeData() => Data != null;
     }
 
     // just result
@@ -44,7 +46,9 @@ namespace PoweredSoft.DynamicQuery
     {
         public string GroupPath { get; set; }
         public object GroupValue { get; set; }
-        public bool HasSubGroups { get; set; }
+        public bool HasSubGroups => SubGroups != null && SubGroups.Count > 1;
         public List<IGroupQueryResult<TRecord>> SubGroups { get; set; }
+
+        public bool ShouldSerializeSubGroups() => HasSubGroups;
     }
 }
