@@ -13,4 +13,9 @@ namespace PoweredSoft.DynamicQuery.Core
     {
         object InterceptResultTo(T entity);
     }
+
+    public interface IQueryConvertInterceptor<T, T2> : IQueryInterceptor
+    {
+        T2 InterceptResultTo(T entity);
+    }
 }
