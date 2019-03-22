@@ -4,6 +4,11 @@ It's a library that allows you to easily query a queryable using a criteria obje
 
 It also offers, to intercept the query using **IQueryInterceptor** implementations.
 
+## Breaking Changes
+
+If you are moving up from v1, the breaking changes details are lower.
+
+
 ## Getting Started
 
 > Install nuget package to your awesome project.
@@ -84,6 +89,25 @@ public async Task<IQueryExecutionResult> Read(
 ### Sample Web Project - ASP.NET CORE + EF Core
 
 Visit: https://github.com/PoweredSoft/DynamicQueryAspNetCoreSample
+
+### Breaking Changes if you are migrating from 1.x
+
+Response interface, is now generic ```IQueryResult<T>``` which impacts the way to execute the handler.
+
+#### Grouping results
+
+Since the results are now generic, it's no longer a List<object> in the response so that changes the result if grouping is requested.
+
+You have now a property Groups, and HasSubGroups, and SubGroups.
+
+#### QueryConvertTo Interceptor
+
+If you are using IQueryConvertTo interceptors, it's new that you must specify the type you are converting to
+Ex:
+```csharp
+IQueryable<OfSomething> query = context.Somethings;
+var result = handler.Execute<OfSomething, OfSomethingElse>(query, criteria);
+```
 
 ## Criteria
 
