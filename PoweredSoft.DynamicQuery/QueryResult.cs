@@ -46,7 +46,7 @@ namespace PoweredSoft.DynamicQuery
     {
         public string GroupPath { get; set; }
         public object GroupValue { get; set; }
-        public bool HasSubGroups => SubGroups != null && SubGroups.Count > 1;
+        public bool HasSubGroups => SubGroups != null && SubGroups.Count >= 1;
         public List<IGroupQueryResult<TRecord>> SubGroups { get; set; }
 
         public bool ShouldSerializeSubGroups() => HasSubGroups;
