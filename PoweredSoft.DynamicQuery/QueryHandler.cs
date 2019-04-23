@@ -37,7 +37,7 @@ namespace PoweredSoft.DynamicQuery
             var aggregateResults = FetchAggregates<TSource>(finalGroups);
 
             // sorting.
-            finalGroups.ForEach(fg => Criteria.Sorts.Insert(0, new Sort(fg.Path, fg.Ascending)));
+            finalGroups.ReversedForEach(fg => Criteria.Sorts.Insert(0, new Sort(fg.Path, fg.Ascending)));
 
             // apply sorting and paging.
             ApplySorting<TSource>();
