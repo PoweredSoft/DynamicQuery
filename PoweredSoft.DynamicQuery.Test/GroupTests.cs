@@ -53,62 +53,6 @@ namespace PoweredSoft.DynamicQuery.Test
         }
 
         [Fact]
-        public void A()
-        {
-            /*
-            MockContextFactory.SeedAndTestContextFor("GroupTests_A", TestSeeders.SeedTicketScenario, ctx =>
-            {
-                var a = ctx.Tickets
-                .OrderBy(t => t.Owner)
-                .ThenBy(t => t.Priority)
-                .Skip(0)
-                .Take(100)
-                .GroupBy(t => new
-                {
-                    t.Owner,
-                    t.Priority
-                })
-                .Select(t => new
-                {
-                    t.Key.Owner,
-                    t.Key.Priority,
-                    Records = t.ToList()
-                })
-                .ToList();
-
-                int breakHere = 0;
-            });*/
-
-            MockContextFactory.SeedAndTestContextFor("GroupTests_A2", TestSeeders.SeedTicketScenario, ctx =>
-            {
-                var criteria = new QueryCriteria()
-                {
-                    Groups = new List<IGroup>()
-                    {
-                        new Group { Path = "Owner" },
-                        new Group { Path = "Priority" }
-                    },
-                    Page = 1,
-                    PageSize = 100
-                };
-
-                var queryHandler = new QueryHandler();
-                var result = queryHandler.Execute(ctx.Tickets, criteria);
-
-                var groupedResult = result.GroupedResult();
-
-                var firstGroup = groupedResult.Groups.FirstOrDefault();
-                Assert.NotNull(firstGroup);
-                var secondGroup = groupedResult.Groups.Skip(1).FirstOrDefault();
-                Assert.NotNull(secondGroup);
-
-                var expected = ctx.Tickets.Select(t => t.TicketType).Distinct().Count();
-                var c = groupedResult.Groups.Select(t => t.GroupValue).Count();
-                Assert.Equal(expected, c);
-            });
-        }
-
-        [Fact]
         public void GroupComplex()
         {
             MockContextFactory.SeedAndTestContextFor("GroupTests_Complex", TestSeeders.SeedTicketScenario, ctx =>
