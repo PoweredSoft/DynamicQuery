@@ -34,6 +34,8 @@ namespace PoweredSoft.DynamicQuery
     {
         public long TotalRecords { get; set; }
         public long? NumberOfPages { get; set; }
+        
+        public bool ShouldSerializeNumberOfPages() => NumberOfPages.HasValue;
     }
 
     public class QueryExecutionGroupResult<TRecord> : QueryExecutionResult<TRecord>, IQueryExecutionGroupResult<TRecord>
