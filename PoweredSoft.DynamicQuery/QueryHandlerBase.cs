@@ -339,7 +339,7 @@ namespace PoweredSoft.DynamicQuery
         protected virtual void ApplySimpleFilter<TSource>(WhereBuilder whereBuilder, ISimpleFilter filter)
         {
             var resolvedConditionOperator = ResolveConditionOperatorFrom(filter.Type);
-            whereBuilder.Compare(filter.Path, resolvedConditionOperator, filter.Value, and: filter.And == true);
+            whereBuilder.Compare(filter.Path, resolvedConditionOperator, filter.Value, and: filter.And == true, negate: filter.Not == true);
         }
 
         protected virtual IFilter InterceptFilter<TSource>(IFilter filter)

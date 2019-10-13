@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PoweredSoft.DynamicQuery.AspNetCore.Json
+namespace PoweredSoft.DynamicQuery.NewtonsoftJson
 {
     public class DynamicQueryJsonConverter : JsonConverter
     {

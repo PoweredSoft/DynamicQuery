@@ -14,6 +14,7 @@ namespace PoweredSoft.DynamicQuery
     public class SimpleFilter : ISimpleFilter
     {
         public bool? And { get; set; }
+        public bool? Not { get; set; }
         public FilterType Type { get; set; }
         public string Path { get; set; }
         public object Value { get; set; }

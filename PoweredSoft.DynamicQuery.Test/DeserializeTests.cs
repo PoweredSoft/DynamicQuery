@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using PoweredSoft.DynamicQuery.AspNetCore.Json;
 using PoweredSoft.DynamicQuery.Core;
+using PoweredSoft.DynamicQuery.NewtonsoftJson;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,6 +22,7 @@ namespace PoweredSoft.DynamicQuery.Test
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             var settings = new JsonSerializerSettings();
+
             settings.Converters.Add(new StringEnumConverter());
             settings.Converters.Add(new DynamicQueryJsonConverter(serviceProvider));
        

@@ -4,5 +4,6 @@
     {
         string Path { get; set; }
         object Value { get; set; }
+        bool? Not { get; set; }
     }
 }

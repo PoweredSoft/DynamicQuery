@@ -119,6 +119,34 @@ namespace PoweredSoft.DynamicQuery.Test
         }
 
         [Fact]
+        public void SimpleFilterWithNot()
+        {
+            MockContextFactory.SeedAndTestContextFor("AsyncTests_SimpleFilter2", TestSeeders.SimpleSeedScenario, async ctx =>
+            {
+                var resultShouldMatch = ctx.Items.Where(t => !t.Name.EndsWith("Cables")).ToList();
+
+                var criteria = new QueryCriteria()
+                {
+                    Filters = new List<IFilter>
+                    {
+                        new SimpleFilter
+                        {
+                            Path = "Name",
+                            Type = FilterType.EndsWith,
+                            Value = "Cables",
+                            Not = true
+                        }
+                    }
+                };
+
+                var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
+                var queryHandler = new QueryHandlerAsync(asyncService);
+                var result = await queryHandler.ExecuteAsync(ctx.Items, criteria);
+                Assert.Equal(resultShouldMatch, result.Data);
+            });
+        }
+
+        [Fact]
         public void TestPaging()
         {
             MockContextFactory.SeedAndTestContextFor("AsyncTests_TestPagging", TestSeeders.SimpleSeedScenario, async ctx =>
