@@ -22,6 +22,7 @@ namespace PoweredSoft.DynamicQuery.Test
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             var settings = new JsonSerializerSettings();
+
             settings.Converters.Add(new StringEnumConverter());
             settings.Converters.Add(new DynamicQueryJsonConverter(serviceProvider));
        

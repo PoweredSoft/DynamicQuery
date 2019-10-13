@@ -18,4 +18,8 @@
     <Authors>David Lebee</Authors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+  </ItemGroup>
+
 </Project>

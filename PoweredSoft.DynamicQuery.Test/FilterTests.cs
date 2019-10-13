@@ -17,6 +17,7 @@ namespace PoweredSoft.DynamicQuery.Test
             public FilterType Type { get; set; } = FilterType.Equal;
             public string Path { get; set; } = "FirstName";
             public object Value { get; set; } = "Chuck";
+            public bool? Not { get; set; }
         }
 
         [Fact]
