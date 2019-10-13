@@ -140,10 +140,11 @@ namespace PoweredSoft.DynamicQuery.Test
             Count++;
         }
 
-        public async Task AfterReadAsync(List<Tuple<Ticket, object>> pairs, CancellationToken cancellationToken = default(CancellationToken))
+        public Task AfterReadAsync(List<Tuple<Ticket, object>> pairs, CancellationToken cancellationToken = default(CancellationToken))
         {
             Test2 = true;
             Count++;
+            return Task.CompletedTask;
         }
 
         public void AfterReadEntity(List<Ticket> entities)
@@ -152,10 +153,11 @@ namespace PoweredSoft.DynamicQuery.Test
             Count++;
         }
 
-        public async Task AfterReadEntityAsync(List<Ticket> entities, CancellationToken cancellationToken = default(CancellationToken))
+        public Task AfterReadEntityAsync(List<Ticket> entities, CancellationToken cancellationToken = default(CancellationToken))
         {
             Test4 = true;
             Count++;
+            return Task.CompletedTask;
         }
 
         public object InterceptResultTo(Ticket entity)
