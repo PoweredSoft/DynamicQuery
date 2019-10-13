@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using PoweredSoft.DynamicQuery.AspNetCore.Json;
 using System;
 
 namespace PoweredSoft.DynamicQuery.NewtonsoftJson

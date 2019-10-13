@@ -5,26 +5,19 @@
     <Copyright>Powered Softwares Inc.</Copyright>
     <PackageLicenseUrl>MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/PoweredSoft/DynamicQuery</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery</RepositoryUrl>
+    <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery.Core/</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
-    <PackageTags>powered,soft,dynamic,criteria,query,builder,asp,net,core</PackageTags>
+    <PackageTags>powered,soft,dynamic,criteria,query,builder</PackageTags>
     <Version>2.1.0$(VersionSuffix)</Version>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
-    <Product>PoweredSoft.DynamicQuery.AspNetCore</Product>
-    <Description>This projects makes it easier to use dynamic query in a asp.net core mvc project.</Description>
-    <PackageId>PoweredSoft.DynamicQuery.AspNetCore</PackageId>
+    <PackageId>PoweredSoft.DynamicQuery.System.Text.Json</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <Company>Powered Soft</Company>
+    <Company>Poweredsoft</Company>
     <Authors>David Lebee</Authors>
   </PropertyGroup>
 
   <ItemGroup>
-	  <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj" />
-    <ProjectReference Include="..\PoweredSoft.DynamicQuery\PoweredSoft.DynamicQuery.csproj" />
   </ItemGroup>
 
 </Project>
