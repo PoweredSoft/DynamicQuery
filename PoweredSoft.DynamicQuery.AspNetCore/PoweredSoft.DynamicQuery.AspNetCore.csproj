@@ -8,7 +8,7 @@
     <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>powered,soft,dynamic,criteria,query,builder,asp,net,core</PackageTags>
-    <Version>2.0.0$(VersionSuffix)</Version>
+    <Version>2.1.0$(VersionSuffix)</Version>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
     <Product>PoweredSoft.DynamicQuery.AspNetCore</Product>
     <Description>This projects makes it easier to use dynamic query in a asp.net core mvc project.</Description>
