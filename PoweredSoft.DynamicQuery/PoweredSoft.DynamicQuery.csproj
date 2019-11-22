@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
-    <PackageReference Include="PoweredSoft.Data" Version="1.1.3" />
+    <PackageReference Include="PoweredSoft.Data" Version="2.0.0" />
     <PackageReference Include="PoweredSoft.DynamicLinq" Version="1.1.8" />
   </ItemGroup>
 
