@@ -43,13 +43,22 @@ namespace PoweredSoft.DynamicQuery
             ApplySorting<TSource>();
             ApplyPaging<TSource>();
 
-            // create group & select expression.
-            CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb => finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}")));
+            if (Options.GroupByInMemory)
+                CurrentQueryable = CurrentQueryable.ToObjectList().Cast<TSource>().AsQueryable(); 
+
+            CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
+            {
+                gb.NullChecking(Options.GroupByInMemory ? Options.GroupByInMemoryNullCheck : false);
+                finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}"));
+            });
+
             CurrentQueryable = CurrentQueryable.Select(sb =>
             {
+                sb.NullChecking(Options.GroupByInMemory ? Options.GroupByInMemoryNullCheck : false);
                 finalGroups.ForEach((fg, index) => sb.Key($"Key_{index}", $"Key_{index}"));
                 sb.ToList("Records");
             });
+
 
             // loop through the grouped records.
             var groupRecords = CurrentQueryable.ToDynamicClassList();
@@ -118,13 +127,25 @@ namespace PoweredSoft.DynamicQuery
 
         public IQueryExecutionResult<TSource> Execute<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria)
         {
-            Reset(queryable, criteria);
+            Reset(queryable, criteria, new QueryExecutionOptions());
             return FinalExecute<TSource, TSource>();
         }
 
         public IQueryExecutionResult<TRecord> Execute<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria)
         {
-            Reset(queryable, criteria);
+            Reset(queryable, criteria, new QueryExecutionOptions());
+            return FinalExecute<TSource, TRecord>();
+        }
+
+        public IQueryExecutionResult<TSource> Execute<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options)
+        {
+            Reset(queryable, criteria, options);
+            return FinalExecute<TSource, TSource>();
+        }
+
+        public IQueryExecutionResult<TRecord> Execute<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options)
+        {
+            Reset(queryable, criteria, options);
             return FinalExecute<TSource, TRecord>();
         }
     }
