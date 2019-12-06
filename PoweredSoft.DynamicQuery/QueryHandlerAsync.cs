@@ -20,7 +20,7 @@ namespace PoweredSoft.DynamicQuery
             AsyncQueryableService = asyncQueryableService;
         }
 
-        protected virtual Task<IQueryExecutionResult<TRecord>> FinalExecuteAsync<TSource, TRecord>(CancellationToken cancellationToken = default(CancellationToken))
+        protected virtual Task<IQueryExecutionResult<TRecord>> FinalExecuteAsync<TSource, TRecord>(CancellationToken cancellationToken = default)
         {
             CommonBeforeExecute<TSource>();
             return HasGrouping ? ExecuteAsyncGrouping<TSource, TRecord>(cancellationToken) : ExecuteAsyncNoGrouping<TSource, TRecord>(cancellationToken);
@@ -50,16 +50,44 @@ namespace PoweredSoft.DynamicQuery
             ApplySorting<TSource>();
             ApplyPaging<TSource>();
 
-            // create group & select expression.
-            CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb => finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}")));
-            CurrentQueryable = CurrentQueryable.Select(sb =>
-            {
-                finalGroups.ForEach((fg, index) => sb.Key($"Key_{index}", $"Key_{index}"));
-                sb.ToList("Records");
-            });
+            List<DynamicClass> groupRecords;
 
-            // loop through the grouped records.
-            var groupRecords = await AsyncQueryableService.ToListAsync(CurrentQueryable.Cast<DynamicClass>(), cancellationToken);
+            if (Options.GroupByInMemory)
+            {
+                CurrentQueryable = CurrentQueryable.ToObjectList().Cast<TSource>().AsQueryable();
+
+                // create group & select expression.
+                CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
+                {
+                    gb.NullChecking(Options.GroupByInMemory ? Options.GroupByInMemoryNullCheck : false);
+                    finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}"));
+                });
+                CurrentQueryable = CurrentQueryable.Select(sb =>
+                {
+                    sb.NullChecking(Options.GroupByInMemory ? Options.GroupByInMemoryNullCheck : false);
+                    finalGroups.ForEach((fg, index) => sb.Key($"Key_{index}", $"Key_{index}"));
+                    sb.ToList("Records");
+                });
+
+                // loop through the grouped records.
+                groupRecords = CurrentQueryable.Cast<DynamicClass>().ToList();
+            }
+            else
+            { 
+                // create group & select expression.
+                CurrentQueryable = CurrentQueryable.GroupBy(QueryableUnderlyingType, gb =>
+                {
+                    finalGroups.ForEach((fg, index) => gb.Path(fg.Path, $"Key_{index}"));
+                });
+                CurrentQueryable = CurrentQueryable.Select(sb =>
+                {
+                    finalGroups.ForEach((fg, index) => sb.Key($"Key_{index}", $"Key_{index}"));
+                    sb.ToList("Records");
+                });
+
+                // loop through the grouped records.
+                groupRecords = await AsyncQueryableService.ToListAsync(CurrentQueryable.Cast<DynamicClass>(), cancellationToken);
+            }
 
             // now join them into logical collections
             var lastLists = new List<(List<TSource> entities, IGroupQueryResult<TRecord> group)>();
@@ -127,15 +155,27 @@ namespace PoweredSoft.DynamicQuery
             return finalResult;
         }
 
-        public Task<IQueryExecutionResult<TSource>> ExecuteAsync<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<IQueryExecutionResult<TSource>> ExecuteAsync<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default)
         {
-            Reset(queryable, criteria);
+            Reset(queryable, criteria, new QueryExecutionOptions());
             return FinalExecuteAsync<TSource, TSource>(cancellationToken);
         }
 
-        public Task<IQueryExecutionResult<TRecord>> ExecuteAsync<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<IQueryExecutionResult<TRecord>> ExecuteAsync<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default)
         {
-            Reset(queryable, criteria);
+            Reset(queryable, criteria, new QueryExecutionOptions());
+            return FinalExecuteAsync<TSource, TRecord>(cancellationToken);
+        }
+
+        public Task<IQueryExecutionResult<TSource>> ExecuteAsync<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options, CancellationToken cancellationToken = default)
+        {
+            Reset(queryable, criteria, options);
+            return FinalExecuteAsync<TSource, TSource>(cancellationToken);
+        }
+
+        public Task<IQueryExecutionResult<TRecord>> ExecuteAsync<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options, CancellationToken cancellationToken = default)
+        {
+            Reset(queryable, criteria, options);
             return FinalExecuteAsync<TSource, TRecord>(cancellationToken);
         }
     }

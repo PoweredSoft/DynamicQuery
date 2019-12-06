@@ -1,4 +1,5 @@
-﻿using PoweredSoft.DynamicQuery.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using PoweredSoft.DynamicQuery.Core;
 using PoweredSoft.DynamicQuery.Extensions;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
@@ -18,23 +19,32 @@ namespace PoweredSoft.DynamicQuery.Test
         {
             MockContextFactory.SeedAndTestContextFor("GroupTests_Simple", TestSeeders.SimpleSeedScenario, ctx =>
             {
-                var shouldResult = ctx.Orders.OrderBy(t => t.Customer).GroupBy(t => t.Customer).Select(t => new
-                {
-                    Customer = t.Key,
-                    Orders = t.ToList()
-                }).ToList();
+                var shouldResult = ctx.Orders
+                    .OrderBy(t => t.CustomerId)
+                    .ToList()
+                    .GroupBy(t => t.CustomerId)
+                    .Select(t => new
+                    {
+                        CustomerId = t.Key,
+                        Orders = t.ToList()
+                    })
+                    .ToList();
 
                 // query handler that is empty should be the same as running to list.
                 var criteria = new QueryCriteria()
                 {
                     Groups = new List<IGroup>
                     {
-                        new Group { Path = "Customer" }
+                        new Group { Path = "CustomerId" }
                     }
                 };
 
                 var queryHandler = new QueryHandler();
-                var result = queryHandler.Execute(ctx.Orders, criteria);
+                var result = queryHandler.Execute(ctx.Orders, criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true,
+                    GroupByInMemoryNullCheck = false
+                });
                 var groupedResult = result.GroupedResult();
 
                 // top level should have same amount of group levels.
@@ -43,7 +53,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 {
                     var expected = shouldResult[0];
                     var actual = groupedResult.Groups[0];
-                    Assert.Equal(expected.Customer.Id, (actual.GroupValue as Customer).Id);
+                    Assert.Equal(expected.CustomerId, actual.GroupValue);
 
                     var expectedOrderIds = expected.Orders.Select(t => t.Id).ToList();
                     var actualOrderIds = actual.Data.Cast<Order>().Select(t => t.Id).ToList();
@@ -71,7 +81,10 @@ namespace PoweredSoft.DynamicQuery.Test
                 };
 
                 var queryHandler = new QueryHandler();
-                var result = queryHandler.Execute(ctx.Tickets, criteria);
+                var result = queryHandler.Execute(ctx.Tickets, criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true
+                });
 
                 var groupedResult = result.GroupedResult();
 
@@ -106,7 +119,11 @@ namespace PoweredSoft.DynamicQuery.Test
                 var interceptor = new InterceptorsWithGrouping();
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(interceptor);
-                var result = queryHandler.Execute<Ticket, InterceptorWithGroupingFakeModel>(ctx.Tickets, criteria);
+                var result = queryHandler.Execute<Ticket, InterceptorWithGroupingFakeModel>(ctx.Tickets, criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true
+                });
+
                 Assert.Equal(4, interceptor.Count);
                 Assert.True(interceptor.Test);
                 Assert.True(interceptor.Test2);

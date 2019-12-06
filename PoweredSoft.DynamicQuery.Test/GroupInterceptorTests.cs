@@ -1,4 +1,5 @@
-﻿using PoweredSoft.DynamicQuery.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using PoweredSoft.DynamicQuery.Core;
 using PoweredSoft.DynamicQuery.Extensions;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
@@ -9,7 +10,7 @@ using Xunit;
 
 namespace PoweredSoft.DynamicQuery.Test
 {
-    public class GroupInterceptorTests
+    public partial class GroupInterceptorTests
     {
         private class MockGroupInterceptor : IGroupInterceptor
         {
@@ -37,7 +38,34 @@ namespace PoweredSoft.DynamicQuery.Test
                 criteria.Groups.Add(new Group { Path = "CustomerFirstName" });
                 var queryHandler = new QueryHandler();
                 queryHandler.AddInterceptor(new MockGroupInterceptor());
-                var result = queryHandler.Execute(ctx.Orders, criteria);
+                var result = queryHandler.Execute(ctx.Orders.Include(t => t.Customer), criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true
+                });
+
+                var groupedResult = result.GroupedResult();
+                var actual = groupedResult.Groups.Select(t => t.GroupValue).ToList();
+                Assert.Equal(expected, actual);
+            });
+        }
+
+        [Fact]
+        public void WithInterptorSimple()
+        {
+            MockContextFactory.SeedAndTestContextFor("GroupInterceptorTests_Simple", TestSeeders.SimpleSeedScenario, ctx =>
+            {
+                var expected = ctx.Orders
+                    .OrderBy(t => t.Customer.FirstName)
+                    .GroupBy(t => t.Customer.FirstName)
+                    .Select(t => t.Key)
+                    .ToList();
+
+                var criteria = new QueryCriteria();
+                criteria.Groups.Add(new Group { Path = "CustomerFirstName" });
+                var queryHandler = new QueryHandler();
+                queryHandler.AddInterceptor(new MockGroupInterceptor());
+                queryHandler.AddInterceptor(new MockQueryExecutionOptionsInterceptor());
+                var result = queryHandler.Execute(ctx.Orders.Include(t => t.Customer), criteria);
 
                 var groupedResult = result.GroupedResult();
                 var actual = groupedResult.Groups.Select(t => t.GroupValue).ToList();

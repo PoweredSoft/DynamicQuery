@@ -1,4 +1,5 @@
-﻿using PoweredSoft.DynamicQuery.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using PoweredSoft.DynamicQuery.Core;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
 using System.Collections.Generic;
@@ -27,10 +28,11 @@ namespace PoweredSoft.DynamicQuery.Test
                         ItemQuantityAverage = t.Average(t2 => t2.Quantity),
                         ItemQuantitySum = t.Sum(t2 => t2.Quantity),
                         AvgOfPrice = t.Average(t2 => t2.PriceAtTheTime),
+                        /* not supported by ef core 3.0
                         First = t.First(),
                         FirstOrDefault = t.FirstOrDefault(),
                         Last = t.Last(),
-                        LastOrDefault = t.LastOrDefault()
+                        LastOrDefault = t.LastOrDefault()*/
                     })
                     .First();
 
@@ -45,21 +47,28 @@ namespace PoweredSoft.DynamicQuery.Test
                         new Aggregate { Type = AggregateType.Avg, Path = "PriceAtTheTime"},
                         new Aggregate { Type = AggregateType.Min, Path = "Quantity"},
                         new Aggregate { Type = AggregateType.Max, Path = "Quantity" },
+                        /*not support by ef core 3.0
                         new Aggregate { Type = AggregateType.First },
                         new Aggregate { Type = AggregateType.FirstOrDefault },
                         new Aggregate { Type = AggregateType.Last },
                         new Aggregate { Type = AggregateType.LastOrDefault },
+                        */
                     }
                 };
 
                 var queryHandler = new QueryHandler();
-                var result = queryHandler.Execute(ctx.OrderItems, criteria);
+                var result = queryHandler.Execute(ctx.OrderItems, criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true
+                });
 
                 var aggCount = result.Aggregates.First(t => t.Type == AggregateType.Count);
+
+                /*
                 var aggFirst = result.Aggregates.First(t => t.Type == AggregateType.First);
                 var aggFirstOrDefault = result.Aggregates.First(t => t.Type == AggregateType.FirstOrDefault);
                 var aggLast = result.Aggregates.First(t => t.Type == AggregateType.Last);
-                var aggLastOrDefault = result.Aggregates.First(t => t.Type == AggregateType.LastOrDefault);
+                var aggLastOrDefault = result.Aggregates.First(t => t.Type == AggregateType.LastOrDefault);*/
 
                 var aggItemQuantityMin  = result.Aggregates.First(t => t.Type == AggregateType.Min && t.Path == "Quantity");
                 var aggItemQuantityMax = result.Aggregates.First(t => t.Type == AggregateType.Max && t.Path == "Quantity");
@@ -68,10 +77,11 @@ namespace PoweredSoft.DynamicQuery.Test
                 var aggAvgOfPrice = result.Aggregates.First(t => t.Type == AggregateType.Avg && t.Path == "PriceAtTheTime");
 
                 Assert.Equal(shouldResult.Count, aggCount.Value);
+                /*
                 Assert.Equal(shouldResult.First?.Id, (aggFirst.Value as OrderItem)?.Id);
                 Assert.Equal(shouldResult.FirstOrDefault?.Id, (aggFirstOrDefault.Value as OrderItem)?.Id);
                 Assert.Equal(shouldResult.Last?.Id, (aggLast.Value as OrderItem)?.Id);
-                Assert.Equal(shouldResult.LastOrDefault?.Id, (aggLastOrDefault.Value as OrderItem)?.Id);
+                Assert.Equal(shouldResult.LastOrDefault?.Id, (aggLastOrDefault.Value as OrderItem)?.Id);*/
 
                 Assert.Equal(shouldResult.ItemQuantityAverage, aggItemQuantityAverage.Value);
                 Assert.Equal(shouldResult.ItemQuantitySum, aggItemQuantitySum.Value);
@@ -113,7 +123,11 @@ namespace PoweredSoft.DynamicQuery.Test
                 };
 
                 var queryHandler = new QueryHandler();
-                var result = queryHandler.Execute(ctx.OrderItems, criteria);
+                var queryable = ctx.OrderItems.Include(t => t.Order);
+                var result = queryHandler.Execute(queryable, criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true
+                });
 
                 var groupedResult = result as IQueryExecutionGroupResult<OrderItem>;
                 Assert.NotNull(groupedResult);

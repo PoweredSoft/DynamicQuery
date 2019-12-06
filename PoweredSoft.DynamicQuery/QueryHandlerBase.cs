@@ -20,22 +20,34 @@ namespace PoweredSoft.DynamicQuery
         protected IQueryCriteria Criteria { get; set; }
         protected IQueryable QueryableAtStart { get; private set; }
         protected IQueryable CurrentQueryable { get; set; }
+        protected IQueryExecutionOptions Options { get; private set; }
+
         protected Type QueryableUnderlyingType => QueryableAtStart.ElementType;
         protected bool HasGrouping => Criteria.Groups?.Any() == true;
         protected bool HasPaging => Criteria.PageSize.HasValue && Criteria.PageSize > 0;
 
-        protected virtual void Reset(IQueryable queryable, IQueryCriteria criteria)
+        protected virtual void Reset(IQueryable queryable, IQueryCriteria criteria, IQueryExecutionOptions options)
         {
             Criteria = criteria ?? throw new ArgumentNullException("criteria");
             QueryableAtStart = queryable ?? throw new ArgumentNullException("queryable");
             CurrentQueryable = QueryableAtStart;
+            Options = options;
         }
 
         protected virtual void CommonBeforeExecute<TSource>()
         {
+            ApplyQueryExecutionOptionIncerceptors();
             ApplyIncludeStrategyInterceptors<TSource>();
             ApplyBeforeFilterInterceptors<TSource>();
             ApplyFilters<TSource>();
+        }
+
+        protected virtual void ApplyQueryExecutionOptionIncerceptors()
+        {
+            Options = Interceptors
+                .Where(t => t is IQueryExecutionOptionsInterceptor)
+                .Cast<IQueryExecutionOptionsInterceptor>()
+                .Aggregate(Options, (prev, curr) => curr.InterceptQueryExecutionOptions(CurrentQueryable, prev));
         }
 
         public virtual void AddInterceptor(IQueryInterceptor interceptor)

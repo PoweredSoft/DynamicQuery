@@ -14,12 +14,9 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
         public static void TestContextFor(string testName, Action<MockContext> action)
         {
             var options = new DbContextOptionsBuilder<MockContext>()
-                .ConfigureWarnings(warnings => 
-                    warnings.Ignore(RelationalEventId.QueryClientEvaluationWarning)
-                )
                 .UseInMemoryDatabase(databaseName: testName).Options;
 
-            using (var ctx = new MockContext(options))
+            using var ctx = new MockContext(options);
                 action(ctx);
         }
 
