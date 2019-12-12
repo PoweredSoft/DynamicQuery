@@ -33,7 +33,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 // criteria
                 var criteria = new QueryCriteria();
                 criteria.Sorts.Add(new Sort("CustomerFullName"));
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockSortInterceptor());
                 var result = queryHandler.Execute(ctx.Orders, criteria);
                 Assert.Equal(expected, result.Data);

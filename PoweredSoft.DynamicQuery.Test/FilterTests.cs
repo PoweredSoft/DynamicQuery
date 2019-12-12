@@ -32,7 +32,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     Filters = new List<IFilter> { new MockIsChuckFilter() }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Customers, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -58,7 +58,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Items, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -89,7 +89,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Customers, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -125,7 +125,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Customers, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });

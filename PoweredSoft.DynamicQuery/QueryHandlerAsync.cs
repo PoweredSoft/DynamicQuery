@@ -15,7 +15,7 @@ namespace PoweredSoft.DynamicQuery
     {
         public IAsyncQueryableService AsyncQueryableService { get; }
 
-        public QueryHandlerAsync(IAsyncQueryableService asyncQueryableService)
+        public QueryHandlerAsync(IAsyncQueryableService asyncQueryableService, IEnumerable<IQueryInterceptorProvider> queryInterceptorProviders) : base(queryInterceptorProviders)
         {
             AsyncQueryableService = asyncQueryableService;
         }
@@ -157,25 +157,25 @@ namespace PoweredSoft.DynamicQuery
 
         public Task<IQueryExecutionResult<TSource>> ExecuteAsync<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default)
         {
-            Reset(queryable, criteria, new QueryExecutionOptions());
+            Reset<TSource, TSource>(queryable, criteria, new QueryExecutionOptions());
             return FinalExecuteAsync<TSource, TSource>(cancellationToken);
         }
 
         public Task<IQueryExecutionResult<TRecord>> ExecuteAsync<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, CancellationToken cancellationToken = default)
         {
-            Reset(queryable, criteria, new QueryExecutionOptions());
+            Reset<TSource, TRecord>(queryable, criteria, new QueryExecutionOptions());
             return FinalExecuteAsync<TSource, TRecord>(cancellationToken);
         }
 
         public Task<IQueryExecutionResult<TSource>> ExecuteAsync<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options, CancellationToken cancellationToken = default)
         {
-            Reset(queryable, criteria, options);
+            Reset<TSource, TSource>(queryable, criteria, options);
             return FinalExecuteAsync<TSource, TSource>(cancellationToken);
         }
 
         public Task<IQueryExecutionResult<TRecord>> ExecuteAsync<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options, CancellationToken cancellationToken = default)
         {
-            Reset(queryable, criteria, options);
+            Reset<TSource, TRecord>(queryable, criteria, options);
             return FinalExecuteAsync<TSource, TRecord>(cancellationToken);
         }
     }

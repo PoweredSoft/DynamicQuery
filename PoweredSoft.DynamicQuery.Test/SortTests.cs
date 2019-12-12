@@ -27,7 +27,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Orders, criteria);
                 Assert.Equal(shouldResult, result.Data);
             });
@@ -50,7 +50,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Orders, criteria);
                 Assert.Equal(shouldResult, result.Data);
             });
@@ -83,7 +83,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockSortInterceptor());
                 var result = queryHandler.Execute(ctx.Orders, criteria);
                 Assert.Equal(shouldResult, result.Data);

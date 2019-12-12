@@ -50,7 +50,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 queryable = (IQueryable<Order>)interceptor.InterceptBeforeFiltering(criteria, queryable);
 
                 // query handler should pass by the same interceptor.
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(interceptor);
                 var result = queryHandler.Execute(ctx.Orders, criteria);
 
@@ -75,7 +75,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 queryable = interceptor.InterceptBeforeFiltering(criteria, queryable);
 
                 // query handler should pass by the same interceptor.
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(interceptor);
                 var result = queryHandler.Execute(ctx.Orders, criteria);
 

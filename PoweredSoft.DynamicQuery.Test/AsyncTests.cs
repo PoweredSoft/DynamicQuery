@@ -27,7 +27,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 // query handler that is empty should be the same as running to list.
                 var aqf = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
                 var criteria = new QueryCriteria();
-                var queryHandler = new QueryHandlerAsync(aqf);
+                var queryHandler = new QueryHandlerAsync(aqf, Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = await queryHandler.ExecuteAsync(queryable, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -66,7 +66,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
                 var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
-                var queryHandler = new QueryHandlerAsync(asyncService);
+                var queryHandler = new QueryHandlerAsync(asyncService, Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = await queryHandler.ExecuteAsync(ctx.OrderItems.Include(t => t.Order.Customer), criteria, new QueryExecutionOptions
                 {
                     GroupByInMemory = true
@@ -118,7 +118,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 };
 
                 var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
-                var queryHandler = new QueryHandlerAsync(asyncService);
+                var queryHandler = new QueryHandlerAsync(asyncService, Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = await queryHandler.ExecuteAsync(ctx.Items, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -146,7 +146,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 };
 
                 var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
-                var queryHandler = new QueryHandlerAsync(asyncService);
+                var queryHandler = new QueryHandlerAsync(asyncService, Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = await queryHandler.ExecuteAsync(ctx.Items, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -166,7 +166,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 criteria.PageSize = 5;
 
                 var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
-                var queryHandler = new QueryHandlerAsync(asyncService);
+                var queryHandler = new QueryHandlerAsync(asyncService, Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = await queryHandler.ExecuteAsync(ctx.OrderItems, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -205,7 +205,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
                 var asyncService = new AsyncQueryableService(new[] { new AsyncQueryableHandlerService() });
-                var queryHandler = new QueryHandlerAsync(asyncService);
+                var queryHandler = new QueryHandlerAsync(asyncService, Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockQueryExecutionOptionsInterceptor());
                 var result = await queryHandler.ExecuteAsync(ctx.OrderItems.Include(t => t.Order.Customer), criteria);
 

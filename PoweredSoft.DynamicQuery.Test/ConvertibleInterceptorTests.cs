@@ -2,6 +2,7 @@
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -77,7 +78,7 @@ namespace PoweredSoft.DynamicQuery.Test
             MockContextFactory.SeedAndTestContextFor("QueryConvertInterceptorTests_NonGeneric", TestSeeders.SimpleSeedScenario, ctx =>
             {
                 var criteria = new QueryCriteria();
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockQueryConvertInterceptor());
                 var result = queryHandler.Execute<Customer, CustomerModel>(ctx.Customers, criteria);
                 Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
@@ -90,7 +91,7 @@ namespace PoweredSoft.DynamicQuery.Test
             MockContextFactory.SeedAndTestContextFor("ConvertibleIntereceptorTests_Generic", TestSeeders.SimpleSeedScenario, ctx =>
             {
                 var criteria = new QueryCriteria();
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockQueryConvertGenericInterceptor());
                 var result = queryHandler.Execute<Customer, CustomerModel>(ctx.Customers, criteria);
                 Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
@@ -103,7 +104,7 @@ namespace PoweredSoft.DynamicQuery.Test
             MockContextFactory.SeedAndTestContextFor("ConvertibleIntereceptorTests_Generic2", TestSeeders.SimpleSeedScenario, ctx =>
             {
                 var criteria = new QueryCriteria();
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockQueryConvertGenericInterceptor2());
                 var result = queryHandler.Execute<Customer, CustomerModel>(ctx.Customers, criteria);
                 Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));

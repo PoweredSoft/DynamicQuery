@@ -119,7 +119,7 @@ namespace PoweredSoft.DynamicQuery.Cli
                 new Aggregate { Path = "AgeStr", Type = AggregateType.Avg }
             };;
 
-            var handler = new QueryHandler();
+            var handler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
             handler.AddInterceptor(new PersonQueryInterceptor());
             var result = handler.Execute(queryable, criteria);
 

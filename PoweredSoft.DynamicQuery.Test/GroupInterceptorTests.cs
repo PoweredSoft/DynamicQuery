@@ -36,7 +36,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var criteria = new QueryCriteria();
                 criteria.Groups.Add(new Group { Path = "CustomerFirstName" });
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockGroupInterceptor());
                 var result = queryHandler.Execute(ctx.Orders.Include(t => t.Customer), criteria, new QueryExecutionOptions
                 {
@@ -52,7 +52,7 @@ namespace PoweredSoft.DynamicQuery.Test
         [Fact]
         public void WithInterptorSimple()
         {
-            MockContextFactory.SeedAndTestContextFor("GroupInterceptorTests_Simple", TestSeeders.SimpleSeedScenario, ctx =>
+            MockContextFactory.SeedAndTestContextFor("GroupInterceptorTests_WithInterptorSimple", TestSeeders.SimpleSeedScenario, ctx =>
             {
                 var expected = ctx.Orders
                     .OrderBy(t => t.Customer.FirstName)
@@ -62,7 +62,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 var criteria = new QueryCriteria();
                 criteria.Groups.Add(new Group { Path = "CustomerFirstName" });
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockGroupInterceptor());
                 queryHandler.AddInterceptor(new MockQueryExecutionOptionsInterceptor());
                 var result = queryHandler.Execute(ctx.Orders.Include(t => t.Customer), criteria);

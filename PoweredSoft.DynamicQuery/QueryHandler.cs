@@ -14,6 +14,10 @@ namespace PoweredSoft.DynamicQuery
 {
     public class QueryHandler : QueryHandlerBase, IQueryHandler
     {
+        public QueryHandler(IEnumerable<IQueryInterceptorProvider> queryableInterceptorProviders) : base(queryableInterceptorProviders)
+        {
+        }
+
         protected virtual IQueryExecutionResult<TRecord> FinalExecute<TSource, TRecord>()
         {
             CommonBeforeExecute<TSource>();
@@ -127,25 +131,25 @@ namespace PoweredSoft.DynamicQuery
 
         public IQueryExecutionResult<TSource> Execute<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria)
         {
-            Reset(queryable, criteria, new QueryExecutionOptions());
+            Reset<TSource, TSource>(queryable, criteria, new QueryExecutionOptions());
             return FinalExecute<TSource, TSource>();
         }
 
         public IQueryExecutionResult<TRecord> Execute<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria)
         {
-            Reset(queryable, criteria, new QueryExecutionOptions());
+            Reset<TSource, TRecord>(queryable, criteria, new QueryExecutionOptions());
             return FinalExecute<TSource, TRecord>();
         }
 
         public IQueryExecutionResult<TSource> Execute<TSource>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options)
         {
-            Reset(queryable, criteria, options);
+            Reset<TSource, TSource>(queryable, criteria, options);
             return FinalExecute<TSource, TSource>();
         }
 
         public IQueryExecutionResult<TRecord> Execute<TSource, TRecord>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options)
         {
-            Reset(queryable, criteria, options);
+            Reset<TSource, TRecord>(queryable, criteria, options);
             return FinalExecute<TSource, TRecord>();
         }
     }
