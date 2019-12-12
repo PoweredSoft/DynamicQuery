@@ -56,7 +56,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.OrderItems, criteria, new QueryExecutionOptions
                 {
                     GroupByInMemory = true
@@ -122,7 +122,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var queryable = ctx.OrderItems.Include(t => t.Order);
                 var result = queryHandler.Execute(queryable, criteria, new QueryExecutionOptions
                 {

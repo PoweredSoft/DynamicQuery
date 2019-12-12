@@ -38,7 +38,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     Type = AggregateType.Avg,
                     Path = "ItemPrice"
                 });
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockAggregateInterceptor());
                 var result = queryHandler.Execute(ctx.Items, criteria);
                 Assert.Equal(expected.PriceAtTheTime, result.Aggregates.First().Value);

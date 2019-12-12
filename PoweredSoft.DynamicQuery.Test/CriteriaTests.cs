@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using PoweredSoft.DynamicQuery.Core;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace PoweredSoft.DynamicQuery.Test
 
                 // query handler that is empty should be the same as running to list.
                 var criteria = new QueryCriteria();
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(queryable, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });
@@ -38,7 +39,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 criteria.Page = 2;
                 criteria.PageSize = 5;
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.OrderItems, criteria);
                 Assert.Equal(resultShouldMatch, result.Data);
             });

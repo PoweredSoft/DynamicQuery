@@ -16,7 +16,9 @@ namespace PoweredSoft.DynamicQuery
 {
     public abstract class QueryHandlerBase : IInterceptableQueryHandler
     {
-        protected List<IQueryInterceptor> Interceptors { get; } = new List<IQueryInterceptor>();
+        private readonly IEnumerable<IQueryInterceptorProvider> queryableInterceptorProviders;
+
+        protected List<IQueryInterceptor> AddedInterceptors { get; } = new List<IQueryInterceptor>();
         protected IQueryCriteria Criteria { get; set; }
         protected IQueryable QueryableAtStart { get; private set; }
         protected IQueryable CurrentQueryable { get; set; }
@@ -26,8 +28,21 @@ namespace PoweredSoft.DynamicQuery
         protected bool HasGrouping => Criteria.Groups?.Any() == true;
         protected bool HasPaging => Criteria.PageSize.HasValue && Criteria.PageSize > 0;
 
-        protected virtual void Reset(IQueryable queryable, IQueryCriteria criteria, IQueryExecutionOptions options)
+        protected IReadOnlyList<IQueryInterceptor> Interceptors { get; set; }
+
+        protected virtual void ResetInterceptors<TSource, TResult>(IQueryCriteria criteria, IQueryable<TSource> queryable)
         {
+            Interceptors = ResolveInterceptors<TSource, TResult>(criteria, queryable);
+        }
+
+        public QueryHandlerBase(IEnumerable<IQueryInterceptorProvider> queryableInterceptorProviders)
+        {
+            this.queryableInterceptorProviders = queryableInterceptorProviders;
+        }
+
+        protected virtual void Reset<TSource, TResult>(IQueryable<TSource> queryable, IQueryCriteria criteria, IQueryExecutionOptions options)
+        {
+            ResetInterceptors<TSource, TResult>(criteria, queryable);
             Criteria = criteria ?? throw new ArgumentNullException("criteria");
             QueryableAtStart = queryable ?? throw new ArgumentNullException("queryable");
             CurrentQueryable = QueryableAtStart;
@@ -54,8 +69,8 @@ namespace PoweredSoft.DynamicQuery
         {
             if (interceptor == null) throw new ArgumentNullException("interceptor");
 
-            if (!Interceptors.Contains(interceptor))
-                Interceptors.Add(interceptor);
+            if (!AddedInterceptors.Contains(interceptor))
+                AddedInterceptors.Add(interceptor);
         }
 
         protected virtual IGroup InterceptGroup<TSource>(IGroup group)
@@ -472,6 +487,17 @@ namespace PoweredSoft.DynamicQuery
             });
 
             await AfterReadInterceptors<TSource, TRecord>(pairs);
+        }
+
+        public IReadOnlyList<IQueryInterceptor> ResolveInterceptors<TSource, TResult>(IQueryCriteria criteria, IQueryable<TSource> queryable)
+        {
+            var providedInterceptors = queryableInterceptorProviders.SelectMany(t => t.GetInterceptors<TSource, TResult>(criteria, queryable)).ToList();
+            var final = providedInterceptors
+                .Concat(AddedInterceptors)
+                .Distinct(new QueryInterceptorEqualityComparer())
+                .ToList();
+
+            return final;
         }
     }
 }

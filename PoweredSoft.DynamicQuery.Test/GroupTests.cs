@@ -39,7 +39,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Orders, criteria, new QueryExecutionOptions
                 {
                     GroupByInMemory = true,
@@ -80,7 +80,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Tickets, criteria, new QueryExecutionOptions
                 {
                     GroupByInMemory = true
@@ -117,7 +117,7 @@ namespace PoweredSoft.DynamicQuery.Test
                 };
 
                 var interceptor = new InterceptorsWithGrouping();
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(interceptor);
                 var result = queryHandler.Execute<Ticket, InterceptorWithGroupingFakeModel>(ctx.Tickets, criteria, new QueryExecutionOptions
                 {

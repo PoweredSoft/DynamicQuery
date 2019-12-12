@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,6 +10,7 @@ namespace PoweredSoft.DynamicQuery.Core
     public interface IInterceptableQueryHandler
     {
         void AddInterceptor(IQueryInterceptor interceptor);
+        IReadOnlyList<IQueryInterceptor> ResolveInterceptors<TSource, TResult>(IQueryCriteria criteria, IQueryable<TSource> queryable);
     }
 
     public interface IQueryHandler : IInterceptableQueryHandler
