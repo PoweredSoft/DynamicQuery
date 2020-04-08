@@ -3,13 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <Copyright>Powered Softwares Inc.</Copyright>
-    <PackageLicenseUrl>MIT</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/PoweredSoft/DynamicQuery</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>powered,soft,dynamic,criteria,query,builder,asp,net,core</PackageTags>
     <Version>0.1.3</Version>
-    <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
+    <PackageIconUrl></PackageIconUrl>
     <Product>KuSoft.DynamicQuery.AspNetCore</Product>
     <Description>This projects forked from PoweredSoft/DynamicQuery</Description>
     <PackageId>KuSoft.DynamicQuery.AspNetCore</PackageId>
@@ -17,6 +17,7 @@
     <Company>KuSoft</Company>
     <Authors>David Lebee</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
