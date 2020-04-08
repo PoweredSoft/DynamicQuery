@@ -1,9 +1,13 @@
-﻿using PoweredSoft.DynamicQuery.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using PoweredSoft.DynamicQuery.Core;
+using PoweredSoft.DynamicQuery.Extensions;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace PoweredSoft.DynamicQuery.Test
@@ -15,32 +19,41 @@ namespace PoweredSoft.DynamicQuery.Test
         {
             MockContextFactory.SeedAndTestContextFor("GroupTests_Simple", TestSeeders.SimpleSeedScenario, ctx =>
             {
-                var shouldResult = ctx.Orders.OrderBy(t => t.Customer).GroupBy(t => t.Customer).Select(t => new
-                {
-                    Customer = t.Key,
-                    Orders = t.ToList() 
-                }).ToList();
+                var shouldResult = ctx.Orders
+                    .OrderBy(t => t.CustomerId)
+                    .ToList()
+                    .GroupBy(t => t.CustomerId)
+                    .Select(t => new
+                    {
+                        CustomerId = t.Key,
+                        Orders = t.ToList()
+                    })
+                    .ToList();
 
                 // query handler that is empty should be the same as running to list.
                 var criteria = new QueryCriteria()
                 {
                     Groups = new List<IGroup>
                     {
-                        new Group { Path = "Customer" }
+                        new Group { Path = "CustomerId" }
                     }
                 };
 
-                var queryHandler = new QueryHandler();
-                var result = queryHandler.Execute(ctx.Orders, criteria);
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
+                var result = queryHandler.Execute(ctx.Orders, criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true,
+                    GroupByInMemoryNullCheck = false
+                });
+                var groupedResult = result.GroupedResult();
 
-                var data = result.Data.Cast<Order>().ToList();
                 // top level should have same amount of group levels.
-                Assert.Equal(data.Count, shouldResult.Count);
-                for(var i = 0; i < shouldResult.Count; i++)
+                Assert.Equal(groupedResult.Groups.Count, shouldResult.Count);
+                for (var i = 0; i < shouldResult.Count; i++)
                 {
                     var expected = shouldResult[0];
-                    var actual = ((IGroupQueryResult)result.Data[0]);
-                    Assert.Equal(expected.Customer.Id, (actual.GroupValue as Customer).Id);
+                    var actual = groupedResult.Groups[0];
+                    Assert.Equal(expected.CustomerId, actual.GroupValue);
 
                     var expectedOrderIds = expected.Orders.Select(t => t.Id).ToList();
                     var actualOrderIds = actual.Data.Cast<Order>().Select(t => t.Id).ToList();
@@ -67,18 +80,106 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
-                var result = queryHandler.Execute(ctx.Tickets, criteria);
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
+                var result = queryHandler.Execute(ctx.Tickets, criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true
+                });
 
-                var firstGroup = result.Data[0] as IGroupQueryResult;
+                var groupedResult = result.GroupedResult();
+
+                var firstGroup = groupedResult.Groups.FirstOrDefault();
                 Assert.NotNull(firstGroup);
-                var secondGroup = result.Data[1] as IGroupQueryResult;
+                var secondGroup = groupedResult.Groups.Skip(1).FirstOrDefault();
                 Assert.NotNull(secondGroup);
 
                 var expected = ctx.Tickets.Select(t => t.TicketType).Distinct().Count();
-                var c = result.Data.Cast<IGroupQueryResult>().Select(t => t.GroupValue).Count();
+                var c = groupedResult.Groups.Select(t => t.GroupValue).Count();
                 Assert.Equal(expected, c);
             });
+        }
+
+        [Fact]
+        public void InterceptorsWithGrouping()
+        {
+            MockContextFactory.SeedAndTestContextFor("GroupTests_InterceptorsWithGrouping", TestSeeders.SeedTicketScenario, ctx =>
+            {
+                var criteria = new QueryCriteria()
+                {
+                    Groups = new List<IGroup>()
+                    {
+                        new Group { Path = "TicketType" }
+                    },
+                    Aggregates = new List<IAggregate>()
+                    {
+                        new Aggregate { Type = AggregateType.Count }
+                    }
+                };
+
+                var interceptor = new InterceptorsWithGrouping();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
+                queryHandler.AddInterceptor(interceptor);
+                var result = queryHandler.Execute<Ticket, InterceptorWithGroupingFakeModel>(ctx.Tickets, criteria, new QueryExecutionOptions
+                {
+                    GroupByInMemory = true
+                });
+
+                Assert.Equal(4, interceptor.Count);
+                Assert.True(interceptor.Test);
+                Assert.True(interceptor.Test2);
+                Assert.True(interceptor.Test3);
+                Assert.True(interceptor.Test4);
+            });
+        }
+    }
+
+    class InterceptorWithGroupingFakeModel
+    {
+
+    }
+
+    class InterceptorsWithGrouping :
+        IAfterReadEntityInterceptor<Ticket>,
+        IAfterReadEntityInterceptorAsync<Ticket>,
+        IAfterReadInterceptor<Ticket>,
+        IAfterReadInterceptorAsync<Ticket>,
+        IQueryConvertInterceptor<Ticket>
+    {
+        public int Count { get; set; } = 0;
+        public bool Test { get; set; } = false;
+        public bool Test2 { get; set; } = false;
+        public bool Test3 { get; set; } = false;
+        public bool Test4 { get; set; } = false;
+
+        public void AfterRead(List<Tuple<Ticket, object>> pairs)
+        {
+            Test = true;
+            Count++;
+        }
+
+        public Task AfterReadAsync(List<Tuple<Ticket, object>> pairs, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Test2 = true;
+            Count++;
+            return Task.CompletedTask;
+        }
+
+        public void AfterReadEntity(List<Ticket> entities)
+        {
+            Test3 = true;
+            Count++;
+        }
+
+        public Task AfterReadEntityAsync(List<Ticket> entities, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Test4 = true;
+            Count++;
+            return Task.CompletedTask;
+        }
+
+        public object InterceptResultTo(Ticket entity)
+        {
+            return new InterceptorWithGroupingFakeModel();
         }
     }
 }

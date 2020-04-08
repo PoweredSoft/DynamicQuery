@@ -56,16 +56,32 @@ namespace PoweredSoft.DynamicQuery.Test
             }
         }
 
+        private class MockQueryConvertGenericInterceptor2 :
+            IQueryConvertInterceptor<Customer, CustomerModel>
+        {
+            public CustomerModel InterceptResultTo(Customer entity)
+            {
+                var customer = entity;
+                var personModel = new CustomerModel
+                {
+                    Id = customer.Id,
+                    FirstName = customer.FirstName,
+                    LastName = customer.LastName
+                };
+                return personModel;
+            }
+        }
+
         [Fact]
         public void NonGeneric()
         {
             MockContextFactory.SeedAndTestContextFor("QueryConvertInterceptorTests_NonGeneric", TestSeeders.SimpleSeedScenario, ctx =>
             {
                 var criteria = new QueryCriteria();
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockQueryConvertInterceptor());
-                var result = queryHandler.Execute(ctx.Customers, criteria);
-                Assert.All(result.Data.Cast<Customer>().ToList(), t => Assert.IsType<CustomerModel>(t));
+                var result = queryHandler.Execute<Customer, CustomerModel>(ctx.Customers, criteria);
+                Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
             });
         }
 
@@ -75,10 +91,23 @@ namespace PoweredSoft.DynamicQuery.Test
             MockContextFactory.SeedAndTestContextFor("ConvertibleIntereceptorTests_Generic", TestSeeders.SimpleSeedScenario, ctx =>
             {
                 var criteria = new QueryCriteria();
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockQueryConvertGenericInterceptor());
-                var result = queryHandler.Execute(ctx.Customers, criteria);
-                Assert.All(result.Data.Cast<Customer>().ToList(), t => Assert.IsType<CustomerModel>(t));
+                var result = queryHandler.Execute<Customer, CustomerModel>(ctx.Customers, criteria);
+                Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
+            });
+        }
+
+        [Fact]
+        public void Generic2()
+        {
+            MockContextFactory.SeedAndTestContextFor("ConvertibleIntereceptorTests_Generic2", TestSeeders.SimpleSeedScenario, ctx =>
+            {
+                var criteria = new QueryCriteria();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
+                queryHandler.AddInterceptor(new MockQueryConvertGenericInterceptor2());
+                var result = queryHandler.Execute<Customer, CustomerModel>(ctx.Customers, criteria);
+                Assert.All(result.Data, t => Assert.IsType<CustomerModel>(t));
             });
         }
     }

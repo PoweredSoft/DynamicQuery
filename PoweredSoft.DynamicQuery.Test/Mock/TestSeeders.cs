@@ -97,6 +97,14 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
         {
             MockContextFactory.TestContextFor(testName, ctx =>
             {
+                var owners = new List<string>();
+
+                for(var i = 0; i < 20; i++)
+                {
+                    var f = new Bogus.Faker("en");
+                    owners.Add(f.Person.FullName);
+                }
+
                 var faker = new Bogus.Faker<Ticket>()
                     .RuleFor(t => t.TicketType, (f, u) => f.PickRandom("new", "open", "refused", "closed"))
                     .RuleFor(t => t.Title, (f, u) => f.Lorem.Sentence())
@@ -104,8 +112,8 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
                     .RuleFor(t => t.IsHtml, (f, u) => false)
                     .RuleFor(t => t.TagList, (f, u) => string.Join(",", f.Commerce.Categories(3)))
                     .RuleFor(t => t.CreatedDate, (f, u) => f.Date.Recent(100))
-                    .RuleFor(t => t.Owner, (f, u) => f.Person.FullName)
-                    .RuleFor(t => t.AssignedTo, (f, u) => f.Person.FullName)
+                    .RuleFor(t => t.Owner, (f, u) => f.PickRandom(owners))
+                    .RuleFor(t => t.AssignedTo, (f, u) => f.PickRandom(owners))
                     .RuleFor(t => t.TicketStatus, (f, u) => f.PickRandom(1, 2, 3))
                     .RuleFor(t => t.LastUpdateBy, (f, u) => f.Person.FullName)
                     .RuleFor(t => t.LastUpdateDate, (f, u) => f.Date.Soon(5))

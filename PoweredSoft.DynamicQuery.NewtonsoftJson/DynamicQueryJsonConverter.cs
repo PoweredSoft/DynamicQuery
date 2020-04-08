@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PoweredSoft.DynamicQuery.AspNetCore.Json
+namespace PoweredSoft.DynamicQuery.NewtonsoftJson
 {
     public class DynamicQueryJsonConverter : JsonConverter
     {
@@ -60,7 +60,8 @@ namespace PoweredSoft.DynamicQuery.AspNetCore.Json
                 }
 
                 var filterObj = ServiceProvider.GetService(isComposite ? typeof(ICompositeFilter) : typeof(ISimpleFilter));
-                filterObj = jo.ToObject(filterObj.GetType());
+                var filterType = filterObj.GetType();
+                filterObj = jo.ToObject(filterType, serializer);
                 return filterObj;
             }
 

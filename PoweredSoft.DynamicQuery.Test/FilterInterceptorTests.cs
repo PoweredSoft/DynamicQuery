@@ -58,7 +58,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var query = new QueryHandler();
+                var query = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 query.AddInterceptor(new MockFilterInterceptorA());
                 var result = query.Execute(queryable, criteria);
 
@@ -83,7 +83,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var query = new QueryHandler();
+                var query = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 query.AddInterceptor(new MockFilterInterceptorAWithExtension());
                 var result = query.Execute(queryable, criteria);
 
@@ -108,7 +108,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var query = new QueryHandler();
+                var query = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 query.AddInterceptor(new MockFilterInterceptorAWithExtension());
                 var result = query.Execute(queryable, criteria);
 
@@ -133,7 +133,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var query = new QueryHandler();
+                var query = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 query.AddInterceptor(new MockFilterInterceptorA());
                 query.AddInterceptor(new MockFilterInterceptorB());
                 var result = query.Execute(queryable, criteria);

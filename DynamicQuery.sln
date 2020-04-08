@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.Core", "PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj", "{E614658D-6852-4405-B5BE-3695C3E96B13}"
 EndProject
@@ -18,6 +18,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.Test", "PoweredSoft.DynamicQuery.Test\PoweredSoft.DynamicQuery.Test.csproj", "{3EAD8217-8E10-4261-9055-50444905922C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.AspNetCore", "PoweredSoft.DynamicQuery.AspNetCore\PoweredSoft.DynamicQuery.AspNetCore.csproj", "{DF58BD18-AB47-4018-B1EA-D1118D93B408}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.NewtonsoftJson", "PoweredSoft.DynamicQuery.NewtonsoftJson\PoweredSoft.DynamicQuery.NewtonsoftJson.csproj", "{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.System.Text.Json", "PoweredSoft.DynamicQuery.System.Text.Json\PoweredSoft.DynamicQuery.System.Text.Json.csproj", "{552D67DD-AAB4-4D99-A067-08A593221C84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson", "PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson\PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson.csproj", "{7BBEEE93-A3DB-443B-8254-E148AC9663EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DynamicQuery.AspNetCore.System.Text.Json", "PoweredSoft.DynamicQuery.AspNetCore.System.Text.Json\PoweredSoft.DynamicQuery.AspNetCore.System.Text.Json.csproj", "{5CFE5064-7F09-4584-8734-903EA1FFD217}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +53,22 @@ Global
 		{DF58BD18-AB47-4018-B1EA-D1118D93B408}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF58BD18-AB47-4018-B1EA-D1118D93B408}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF58BD18-AB47-4018-B1EA-D1118D93B408}.Release|Any CPU.Build.0 = Release|Any CPU
+		{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{552D67DD-AAB4-4D99-A067-08A593221C84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{552D67DD-AAB4-4D99-A067-08A593221C84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{552D67DD-AAB4-4D99-A067-08A593221C84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{552D67DD-AAB4-4D99-A067-08A593221C84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BBEEE93-A3DB-443B-8254-E148AC9663EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BBEEE93-A3DB-443B-8254-E148AC9663EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BBEEE93-A3DB-443B-8254-E148AC9663EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BBEEE93-A3DB-443B-8254-E148AC9663EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CFE5064-7F09-4584-8734-903EA1FFD217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CFE5064-7F09-4584-8734-903EA1FFD217}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CFE5064-7F09-4584-8734-903EA1FFD217}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CFE5064-7F09-4584-8734-903EA1FFD217}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

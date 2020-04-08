@@ -1,4 +1,5 @@
-﻿using PoweredSoft.DynamicQuery.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using PoweredSoft.DynamicQuery.Core;
 using PoweredSoft.DynamicQuery.Test.Mock;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace PoweredSoft.DynamicQuery.Test
         {
             public IAggregate InterceptAggregate(IAggregate aggregate) => new Aggregate
             {
-                Path = "Item.Price",
+                Path = "Price",
                 Type = AggregateType.Avg
             };
         }
@@ -24,10 +25,12 @@ namespace PoweredSoft.DynamicQuery.Test
         {
             MockContextFactory.SeedAndTestContextFor("AggregatorInterceptorTests_Simple", TestSeeders.SimpleSeedScenario, ctx =>
             {
-                var expected = ctx.OrderItems.GroupBy(t => true).Select(t => new
-                {
-                    PriceAtTheTime = t.Average(t2 => t2.Item.Price)
-                }).First();
+                var expected = ctx.Items
+                    .GroupBy(t => true)
+                    .Select(t => new
+                    {
+                        PriceAtTheTime = t.Average(t2 => t2.Price)
+                    }).First();
 
                 var criteria = new QueryCriteria();
                 criteria.Aggregates.Add(new Aggregate
@@ -35,9 +38,9 @@ namespace PoweredSoft.DynamicQuery.Test
                     Type = AggregateType.Avg,
                     Path = "ItemPrice"
                 });
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 queryHandler.AddInterceptor(new MockAggregateInterceptor());
-                var result = queryHandler.Execute(ctx.OrderItems, criteria);
+                var result = queryHandler.Execute(ctx.Items, criteria);
                 Assert.Equal(expected.PriceAtTheTime, result.Aggregates.First().Value);
             });
         }

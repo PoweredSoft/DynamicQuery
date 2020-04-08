@@ -17,6 +17,7 @@ namespace PoweredSoft.DynamicQuery.Test
             public FilterType Type { get; set; } = FilterType.Equal;
             public string Path { get; set; } = "FirstName";
             public object Value { get; set; } = "Chuck";
+            public bool? Not { get; set; }
         }
 
         [Fact]
@@ -31,7 +32,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     Filters = new List<IFilter> { new MockIsChuckFilter() }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Customers, criteria);
                 Assert.Equal(resultShouldMatch, result.Data.Cast<Customer>().ToList());
             });
@@ -57,7 +58,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Items, criteria);
                 Assert.Equal(resultShouldMatch, result.Data.Cast<Item>().ToList());
             });
@@ -88,7 +89,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Customers, criteria);
                 Assert.Equal(resultShouldMatch, result.Data.Cast<Customer>().ToList());
             });
@@ -124,7 +125,7 @@ namespace PoweredSoft.DynamicQuery.Test
                     }
                 };
 
-                var queryHandler = new QueryHandler();
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
                 var result = queryHandler.Execute(ctx.Customers, criteria);
                 Assert.Equal(resultShouldMatch, result.Data.Cast<Customer>().ToList());
             });

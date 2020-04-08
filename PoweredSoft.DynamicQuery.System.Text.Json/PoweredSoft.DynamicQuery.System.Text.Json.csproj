@@ -1,26 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Copyright>KuSoft Softwares Inc.</Copyright>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Copyright>Powered Softwares Inc.</Copyright>
     <PackageLicenseUrl>MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/PoweredSoft/DynamicQuery</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery.Core/</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>powered,soft,dynamic,criteria,query,builder</PackageTags>
-    <Version>0.1.3</Version>
+    <Version>2.1.0$(VersionSuffix)</Version>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
-    <Product>KuSoft.DynamicQuery.Core</Product>
-    <Description>core abstractions</Description>
-    <PackageId>KuSoft.DynamicQuery.Core</PackageId>
+    <PackageId>PoweredSoft.DynamicQuery.System.Text.Json</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <Company>KuSoft</Company>
+    <Company>Poweredsoft</Company>
     <Authors>David Lebee</Authors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+    <ProjectReference Include="..\PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj" />
   </ItemGroup>
 
 </Project>

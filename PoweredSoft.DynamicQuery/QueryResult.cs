@@ -19,25 +19,38 @@ namespace PoweredSoft.DynamicQuery
     }
 
     // part of a result.
-    public abstract class QueryResult : IQueryResult
+    public abstract class QueryResult<TRecord> : IQueryResult<TRecord>
     {
         public List<IAggregateResult> Aggregates { get; set; }
-        public IQueryable Data { get; set; }
+        public IQueryable<TRecord> Data { get; set; }
 
         public bool ShouldSerializeAggregates() => Aggregates != null;
+
+        public bool ShouldSerializeData() => Data != null;
     }
 
     // just result
-    public class QueryExecutionResult : QueryResult, IQueryExecutionResult
+    public class QueryExecutionResult<TRecord> : QueryResult<TRecord>, IQueryExecutionResult<TRecord>
     {
         public long TotalRecords { get; set; }
         public long? NumberOfPages { get; set; }
+        
+        public bool ShouldSerializeNumberOfPages() => NumberOfPages.HasValue;
+    }
+
+    public class QueryExecutionGroupResult<TRecord> : QueryExecutionResult<TRecord>, IQueryExecutionGroupResult<TRecord>
+    {
+        public List<IGroupQueryResult<TRecord>> Groups { get; set; }
     }
 
     // group result.
-    public class GroupQueryResult : QueryResult, IGroupQueryResult
+    public class GroupQueryResult<TRecord> : QueryResult<TRecord>, IGroupQueryResult<TRecord>
     {
         public string GroupPath { get; set; }
         public object GroupValue { get; set; }
+        public bool HasSubGroups => SubGroups != null && SubGroups.Count >= 1;
+        public List<IGroupQueryResult<TRecord>> SubGroups { get; set; }
+
+        public bool ShouldSerializeSubGroups() => HasSubGroups;
     }
 }
