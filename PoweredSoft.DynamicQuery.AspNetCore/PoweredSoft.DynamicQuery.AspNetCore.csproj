@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PoweredSoft.DynamicQuery.Core\PoweredSoft.DynamicQuery.Core.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DynamicQuery.System.Text.Json\PoweredSoft.DynamicQuery.System.Text.Json.csproj" />
     <ProjectReference Include="..\PoweredSoft.DynamicQuery\PoweredSoft.DynamicQuery.csproj" />
   </ItemGroup>
 
