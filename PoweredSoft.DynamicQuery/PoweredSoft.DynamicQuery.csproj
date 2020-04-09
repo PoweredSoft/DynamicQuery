@@ -13,10 +13,10 @@
     <Product>KuSoft.DynamicQuery</Product>
     <Description>This projects forked from PoweredSoft/DynamicQuery</Description>
     <PackageId>KuSoft.DynamicQuery</PackageId>
-    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>KuSoft</Company>
     <Authors>David Lebee</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageVersion>0.1.4</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

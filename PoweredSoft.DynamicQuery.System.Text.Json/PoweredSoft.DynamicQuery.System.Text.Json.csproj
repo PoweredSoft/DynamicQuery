@@ -11,7 +11,6 @@
     <Version>2.1.0$(VersionSuffix)</Version>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
     <PackageId>PoweredSoft.DynamicQuery.System.Text.Json</PackageId>
-    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>Poweredsoft</Company>
     <Authors>David Lebee</Authors>
   </PropertyGroup>
