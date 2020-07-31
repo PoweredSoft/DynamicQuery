@@ -26,6 +26,17 @@ The package Asp.net core of dynamic query will help you start to use Dynamic Que
 
 > For NET CORE 2.x look at v2.0 branch.
 
+### New in 2.1.3
+
+You may now add a ```IQueryInterceptorProvider``` to return interceptors on top of being able to use AddInterceptor.
+
+```csharp
+public interface IQueryInterceptorProvider
+{
+    IEnumerable<IQueryInterceptor> GetInterceptors<TSource, TResult>(IQueryCriteria queryCriteria, IQueryable<TSource> queryable);
+}
+```
+
 ### How to configure during startup (NET Core 3)
 
 ```csharp
