@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bogus.DataSets;
 
 namespace PoweredSoft.DynamicQuery.Test.Mock
 {
@@ -22,6 +23,10 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
 
 
         public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+
+        public DateTime RegisterTime { get; set; }
+
+        public TimeSpan BirthTime { get; set; }
     }
 
     public class Item
@@ -32,7 +37,7 @@ namespace PoweredSoft.DynamicQuery.Test.Mock
 
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new HashSet<OrderItem>();
     }
-        
+
     public class OrderItem
     {
         public long Id { get; set; }

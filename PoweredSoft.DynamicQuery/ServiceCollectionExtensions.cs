@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PoweredSoft.DynamicQuery.Core;
+using PoweredSoft.DynamicQuery.TypeConverters;
 using PoweredSoft.Types;
 
 namespace PoweredSoft.DynamicQuery
@@ -9,8 +10,10 @@ namespace PoweredSoft.DynamicQuery
     {
         public static IServiceCollection AddPoweredSoftDynamicQuery(this IServiceCollection services)
         {
-            Converter.RegisterConverter(new EnumConverter());
-           
+            Converter.RegisterConverter(new ToEnumConverter());
+            Converter.RegisterConverter(new StringToLongConverter());
+            Converter.RegisterConverter(new StringToTimeSpanConverter());
+
             services.TryAddTransient<ISort, Sort>();
             services.TryAddTransient<IAggregate, Aggregate>();
             services.TryAddTransient<ISimpleFilter, SimpleFilter>();

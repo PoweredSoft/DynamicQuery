@@ -34,10 +34,10 @@ namespace PoweredSoft.DynamicQuery.Test
 
             var opts = new JsonSerializerOptions();
             // opts.PropertyNameCaseInsensitive = true;
-            // opts.PropertyNamingPolicy=JsonNamingPolicy.CamelCase;
+            opts.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             // opts.WriteIndented = true;
-            opts.Converters.Add(new DynamicQuerySimpleFilterConverter(serviceProvider));
-            // opts.Converters.Add(new DynamicQueryJsonConverter(serviceProvider));
+            // opts.Converters.Add(new DynamicQuerySimpleFilterConverter(serviceProvider));
+            opts.Converters.Add(new DynamicQueryFilterConverter(serviceProvider));
 
             var data = JsonSerializer.Deserialize<ISimpleFilter>(json, opts);
             Assert.NotNull(data);
@@ -45,17 +45,35 @@ namespace PoweredSoft.DynamicQuery.Test
         }
 
 
-
         [Fact]
         public void QueryCriteria()
         {
-            // var json = @"{""page"":1,""pageSize"":20,""filters"":[{""type"":""composite"",""filters"":[{""path"":""title"",""value"":""Qui"",""type"":""StartsWith"",""and"":false}]}]}";
-            var json =
-                @"{""page"":1,""PageSize"":20,""filters"":[{""path"":""title"",""value"":""Qui"",""type"":""StartsWith"",""and"":false}],""sorts"":[{""path"":""aaaa"",""ascending"":true}]}";
+            var json = @"
+                        {
+                            ""page"":1,
+                            ""pageSize"":20,
+                            ""filters"":[
+                                {""path"":""title"",""value"":""Qui"",""type"":""StartsWith"",""and"":true},
+                                {""path"":""date"",""value"":""2020-04-01"",""type"":""Equal"",""and"":false},
+                               
+                                {""type"":""Composite"",""and"":false,""filters"":[
+                                    {""path"":""date1"",""type"":""GreaterThan"",""value"":""2020-04-01""},
+                                    {""path"":""date1"",""type"":""LessThan"",""value"":""2020-04-02""},
+                                    {""type"":""Composite"",""and"":false,""filters"":[
+                                        {""path"":""date2"",""type"":""GreaterThan"",""value"":""2020-05-01""},
+                                        {""path"":""date2"",""type"":""LessThan"",""value"":""2020-05-02""}
+                                    ]}
+                                ]}
+                            ],
+                            ""sorts"":[{""path"":""title"",""ascending"":true}]
+                        }
+                      ";
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddPoweredSoftDynamicQuery();
             var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            #region Newtonsoft.Json
 
             // var settings = new JsonSerializerSettings();
             //
@@ -64,20 +82,29 @@ namespace PoweredSoft.DynamicQuery.Test
             //
             // var data = JsonConvert.DeserializeObject<IQueryCriteria>(json, settings);
 
+            #endregion
+
+            #region Text.Json
+
             var opts = new JsonSerializerOptions();
             // opts.PropertyNameCaseInsensitive = true;
             opts.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             opts.WriteIndented = true;
 
             opts.Converters.Add(new JsonStringEnumConverter());
-            opts.Converters.Add(new DynamicQuerySimpleFilterConverter(serviceProvider));
+
+            opts.Converters.Add(new DynamicQueryFilterConverter(serviceProvider));
+
             opts.Converters.Add(new DynamicQuerySortConverter(serviceProvider));
             opts.Converters.Add(new DynamicQueryJsonConverter(serviceProvider));
+
+            #endregion
 
             var data = JsonSerializer.Deserialize<IQueryCriteria>(json, opts);
             Assert.NotNull(data);
             Assert.Equal(1, data.Page);
             Assert.Equal(20, data.PageSize);
+            Assert.Equal(typeof(ICompositeFilter), data.Filters[2].GetType().GetInterface("ICompositeFilter"));
             Assert.NotEmpty(data.Filters);
             Assert.NotEmpty(data.Sorts);
         }

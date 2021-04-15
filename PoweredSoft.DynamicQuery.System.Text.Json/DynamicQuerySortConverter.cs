@@ -6,31 +6,24 @@ using PoweredSoft.DynamicQuery.Core;
 
 namespace PoweredSoft.DynamicQuery.System.Text.Json
 {
-    public class DynamicQuerySortConverter : JsonConverterFactory
+    public class DynamicQuerySortConverter : BaseJsonConverterFactory
     {
-        private readonly ServiceProvider _serviceProvider;
-
-        public DynamicQuerySortConverter(ServiceProvider serviceProvider)
+        public DynamicQuerySortConverter(ServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _serviceProvider = serviceProvider;
         }
 
         public override bool CanConvert(Type typeToConvert) =>
             typeToConvert.IsInterface && typeToConvert == typeof(ISort);
 
-        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
-        {
-            return Activator.CreateInstance(typeof(SortConverter), args: new object[] {_serviceProvider}) as
+        protected override JsonConverter CreateConverter(ServiceProvider serviceProvider, Type typeToConvert,
+            JsonSerializerOptions options) =>
+            Activator.CreateInstance(typeof(SortConverter), args: new object[] {serviceProvider}) as
                 SortConverter;
-        }
 
-        class SortConverter : JsonConverter<ISort>
+        class SortConverter : BaseJsonConverter<ISort>
         {
-            private readonly ServiceProvider _serviceProvider;
-
-            public SortConverter(ServiceProvider serviceProvider)
+            public SortConverter(ServiceProvider serviceProvider) : base(serviceProvider)
             {
-                _serviceProvider = serviceProvider;
             }
 
             public override ISort Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -38,7 +31,7 @@ namespace PoweredSoft.DynamicQuery.System.Text.Json
                 if (reader.TokenType != JsonTokenType.StartObject)
                     throw new JsonException();
 
-                var sort = _serviceProvider.GetService(typeof(ISort)) as ISort;
+                var sort = GetService<ISort>();
                 if (sort == null)
                     throw new Exception("ISort service not found");
 

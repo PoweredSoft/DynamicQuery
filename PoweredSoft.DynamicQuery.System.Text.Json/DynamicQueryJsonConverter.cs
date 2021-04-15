@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 using PoweredSoft.DynamicQuery.Core;
 
 namespace PoweredSoft.DynamicQuery.System.Text.Json
 {
-    public class DynamicQueryJsonConverter : JsonConverterFactory
+    public class DynamicQueryJsonConverter : BaseJsonConverterFactory
     {
         private Type[] DynamicQueryTypes { get; } =
         {
@@ -21,35 +22,30 @@ namespace PoweredSoft.DynamicQuery.System.Text.Json
             typeof(IQueryHandler)
         };
 
-        private IServiceProvider _serviceProvider;
-
-        public DynamicQueryJsonConverter(IServiceProvider serviceProvider)
+        public DynamicQueryJsonConverter(ServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _serviceProvider = serviceProvider;
         }
 
         public override bool CanConvert(Type typeToConvert) =>
             typeToConvert.IsInterface && DynamicQueryTypes.Contains(typeToConvert);
 
-        public override JsonConverter CreateConverter(Type objectType, JsonSerializerOptions options)
-        {
-            return (JsonConverter) Activator.CreateInstance(typeof(QueryCriteriaConverter),
-                args: new object[] {_serviceProvider});
-        }
 
-        public class QueryCriteriaConverter : JsonConverter<IQueryCriteria>
-        {
-            private readonly IServiceProvider _serviceProvider;
+        protected override JsonConverter CreateConverter(ServiceProvider serviceProvider, Type typeToConvert,
+            JsonSerializerOptions options) =>
+            (JsonConverter) Activator.CreateInstance(typeof(QueryCriteriaConverter),
+                args: new object[] {serviceProvider});
 
-            public QueryCriteriaConverter(IServiceProvider serviceProvider)
+
+        class QueryCriteriaConverter : BaseJsonConverter<IQueryCriteria>
+        {
+            public QueryCriteriaConverter(ServiceProvider serviceProvider) : base(serviceProvider)
             {
-                _serviceProvider = serviceProvider;
             }
 
             public override IQueryCriteria Read(ref Utf8JsonReader reader, Type typeToConvert,
                 JsonSerializerOptions options)
             {
-                var queryCriteria = _serviceProvider.GetService(typeof(IQueryCriteria)) as IQueryCriteria;
+                var queryCriteria = GetService<IQueryCriteria>();
                 if (queryCriteria == null)
                     throw new Exception("IQueryCriteria service not found");
 
@@ -81,7 +77,7 @@ namespace PoweredSoft.DynamicQuery.System.Text.Json
                             if (propertyName == "filters")
                             {
                                 var filters =
-                                    JsonSerializer.Deserialize<List<ISimpleFilter>>(jsonElm.GetRawText(), options);
+                                    JsonSerializer.Deserialize<List<IFilter>>(jsonElm.GetRawText(), options);
                                 queryCriteria.Filters = new List<IFilter>();
                                 queryCriteria.Filters.AddRange(filters);
                             }
