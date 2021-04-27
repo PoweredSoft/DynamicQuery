@@ -366,6 +366,13 @@ namespace PoweredSoft.DynamicQuery
         protected virtual void ApplySimpleFilter<TSource>(WhereBuilder whereBuilder, ISimpleFilter filter)
         {
             var resolvedConditionOperator = ResolveConditionOperatorFrom(filter.Type);
+
+            if (filter.CaseInsensitive == true)
+            {
+                filter.Path += ".ToLower()";
+                filter.Value = $"{filter.Value}"?.ToLower();
+            }
+
             whereBuilder.Compare(filter.Path, resolvedConditionOperator, filter.Value, and: filter.And == true, negate: filter.Not == true);
         }
 

@@ -18,6 +18,7 @@ namespace PoweredSoft.DynamicQuery.Test
             public string Path { get; set; } = "FirstName";
             public object Value { get; set; } = "Chuck";
             public bool? Not { get; set; }
+            public bool? CaseInsensitive { get; set; }
         }
 
         [Fact]
@@ -38,6 +39,8 @@ namespace PoweredSoft.DynamicQuery.Test
             });
         }
 
+       
+
         [Fact]
         public void SimpleFilter()
         {
@@ -54,6 +57,33 @@ namespace PoweredSoft.DynamicQuery.Test
                             Path = "Name",
                             Type = FilterType.EndsWith,
                             Value = "Cables"
+                        }
+                    }
+                };
+
+                var queryHandler = new QueryHandler(Enumerable.Empty<IQueryInterceptorProvider>());
+                var result = queryHandler.Execute(ctx.Items, criteria);
+                Assert.Equal(resultShouldMatch, result.Data);
+            });
+        }
+
+        [Fact]
+        public void SimpleFilterCaseInsensitive()
+        {
+            MockContextFactory.SeedAndTestContextFor("FilterTests_SimpleFilterCaseInsensitive", TestSeeders.SimpleSeedScenario, ctx =>
+            {
+                var resultShouldMatch = ctx.Items.Where(t => t.Name.ToLower().EndsWith("Cables".ToLower())).ToList();
+
+                var criteria = new QueryCriteria()
+                {
+                    Filters = new List<IFilter>
+                    {
+                        new SimpleFilter
+                        {
+                            Path = "Name",
+                            Type = FilterType.EndsWith,
+                            Value = "Cables",
+                            CaseInsensitive = true
                         }
                     }
                 };

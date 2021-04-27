@@ -18,6 +18,7 @@ namespace PoweredSoft.DynamicQuery
         public FilterType Type { get; set; }
         public string Path { get; set; }
         public object Value { get; set; }
+        public bool? CaseInsensitive { get; set; }
     }
 
     public class CompositeFilter : ICompositeFilter
