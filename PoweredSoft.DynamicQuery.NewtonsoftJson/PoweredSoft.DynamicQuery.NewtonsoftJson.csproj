@@ -8,7 +8,7 @@
     <RepositoryUrl>https://github.com/PoweredSoft/DynamicQuery.Core/</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>powered,soft,dynamic,criteria,query,builder</PackageTags>
-    <Version>2.1.0$(VersionSuffix)</Version>
+    <Version>3.0.0$(VersionSuffix)</Version>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
     <PackageId>PoweredSoft.DynamicQuery.Newtonsoft.Json</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>

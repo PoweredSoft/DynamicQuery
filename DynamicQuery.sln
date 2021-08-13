@@ -21,9 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.As
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.NewtonsoftJson", "PoweredSoft.DynamicQuery.NewtonsoftJson\PoweredSoft.DynamicQuery.NewtonsoftJson.csproj", "{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.System.Text.Json", "PoweredSoft.DynamicQuery.System.Text.Json\PoweredSoft.DynamicQuery.System.Text.Json.csproj", "{552D67DD-AAB4-4D99-A067-08A593221C84}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson", "PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson\PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson.csproj", "{7BBEEE93-A3DB-443B-8254-E148AC9663EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson", "PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson\PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson.csproj", "{7BBEEE93-A3DB-443B-8254-E148AC9663EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,10 +53,6 @@ Global
 		{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{201D7ACB-E11A-47EE-80F6-3F6BFB947DCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{552D67DD-AAB4-4D99-A067-08A593221C84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{552D67DD-AAB4-4D99-A067-08A593221C84}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{552D67DD-AAB4-4D99-A067-08A593221C84}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{552D67DD-AAB4-4D99-A067-08A593221C84}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7BBEEE93-A3DB-443B-8254-E148AC9663EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7BBEEE93-A3DB-443B-8254-E148AC9663EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BBEEE93-A3DB-443B-8254-E148AC9663EA}.Release|Any CPU.ActiveCfg = Release|Any CPU

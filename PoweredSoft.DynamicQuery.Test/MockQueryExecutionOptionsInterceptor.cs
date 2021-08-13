@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Internal;
+﻿using Microsoft.EntityFrameworkCore.Query;
 using PoweredSoft.DynamicQuery.Core;
 using System.Linq;
 
