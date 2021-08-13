@@ -24,7 +24,7 @@ PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson | <a href="https://www.nuget.
 
 The package Asp.net core of dynamic query will help you start to use Dynamic Query faster in your web project.
 
-Now on EF5.0 and .NET50
+Now on .NET50
 
 > For NET CORE 3.x look at v2.1 branch
 > For NET CORE 2.x look at v2.0 branch.
