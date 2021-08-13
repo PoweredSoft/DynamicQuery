@@ -27,6 +27,7 @@ The package Asp.net core of dynamic query will help you start to use Dynamic Que
 Now on .NET50
 
 > For NET CORE 3.x look at v2.1 branch
+
 > For NET CORE 2.x look at v2.0 branch.
 
 ### New in Since 2.1.3
