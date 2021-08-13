@@ -9,10 +9,12 @@ namespace PoweredSoft.DynamicQuery.AspNetCore.NewtonsoftJson
         {
             mvcBuilder.AddPoweredSoftDynamicQuery();
             var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
+
             mvcBuilder.AddNewtonsoftJson(o =>
             {
                 o.SerializerSettings.AddPoweredSoftDynamicQueryNewtonsoftJson(serviceProvider, enableStringEnumConverter: enableStringEnumConverter);
             });
+
             return mvcBuilder;
         }
     }
